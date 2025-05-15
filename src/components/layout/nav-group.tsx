@@ -1,4 +1,5 @@
-import { ReactNode } from 'react'
+import { ReactNode } from 'react';
+import { useSidebarVisibility } from '~/context/sidebar-visibility-context';
 import { Link, useLocation } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
 import {
@@ -29,28 +30,60 @@ import {
 import { NavCollapsible, NavItem, NavLink, type NavGroup } from './types'
 
 export function NavGroup({ title, items }: NavGroup) {
-  const { state } = useSidebar()
-  const href = useLocation({ select: (location) => location.href })
+  const { state } = useSidebar();
+  const { visibleItems } = useSidebarVisibility();
+  const href = useLocation({ select: (location) => location.href });
+
+  const filteredNavGroupItems = items.filter(item => {
+    if (visibleItems.includes(item.title)) return true;
+    if (item.items && item.items.some(subItem => visibleItems.includes(subItem.title))) return true;
+    return false;
+  });
+
+  if (filteredNavGroupItems.length === 0) {
+    return null;
+  }
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>{title}</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => {
-          const key = `${item.title}-${item.url}`
+        {filteredNavGroupItems.map((item) => {
+          const key = `${item.title}-${item.url}`;
 
-          if (!item.items)
-            return <SidebarMenuLink key={key} item={item} href={href} />
+          if (!item.items) { // Item is NavLink
+            return <SidebarMenuLink key={key} item={item as NavLink} href={href} />;
+          }
 
-          if (state === 'collapsed')
-            return (
-              <SidebarMenuCollapsedDropdown key={key} item={item} href={href} />
-            )
+          // Item is NavCollapsible
+          const navCollapsibleItem = item as NavCollapsible;
+          const visibleSubItems = navCollapsibleItem.items.filter(subItem => 
+            visibleItems.includes(subItem.title)
+          );
 
-          return <SidebarMenuCollapsible key={key} item={item} href={href} />
+          if (visibleSubItems.length === 0) {
+            // Parent is visible (guaranteed by filteredNavGroupItems), but no children are. 
+            // Render parent as a simple link.
+            const linkVersionOfParent: NavLink = { 
+              title: navCollapsibleItem.title, 
+              url: navCollapsibleItem.url, 
+              icon: navCollapsibleItem.icon, 
+              badge: navCollapsibleItem.badge 
+            };
+            return <SidebarMenuLink key={key} item={linkVersionOfParent} href={href} />;
+          }
+          
+          // Parent is visible AND has visible children. Render as collapsible/dropdown.
+          const itemForRender: NavCollapsible = { ...navCollapsibleItem, items: visibleSubItems };
+
+          if (state === 'collapsed') {
+            return <SidebarMenuCollapsedDropdown key={key} item={itemForRender} href={href} />;
+          }
+          return <SidebarMenuCollapsible key={key} item={itemForRender} href={href} />;
         })}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }
 
 const NavBadge = ({ children }: { children: ReactNode }) => (

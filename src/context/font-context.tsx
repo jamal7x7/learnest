@@ -14,11 +14,15 @@ export const FontProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [font, _setFont] = useState<Font>(() => {
-    const savedFont = localStorage.getItem('font')
-    return fonts.includes(savedFont as Font) ? (savedFont as Font) : fonts[0]
+    if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
+      const savedFont = localStorage.getItem('font')
+      return fonts.includes(savedFont as Font) ? (savedFont as Font) : fonts[0]
+    }
+    return fonts[0]
   })
 
   useEffect(() => {
+    if (typeof window === "undefined") return
     const applyFont = (font: string) => {
       const root = document.documentElement
       root.classList.forEach((cls) => {
@@ -31,14 +35,16 @@ export const FontProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [font])
 
   const setFont = (font: Font) => {
-    localStorage.setItem('font', font)
+    if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
+      localStorage.setItem('font', font)
+    }
     _setFont(font)
   }
 
   return <FontContext value={{ font, setFont }}>{children}</FontContext>
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
+//// eslint-disable-next-line react-refresh/only-export-components
 export const useFont = () => {
   const context = useContext(FontContext)
   if (!context) {

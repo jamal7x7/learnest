@@ -3,7 +3,7 @@ import ThemeToggle from "~/components/ThemeToggle";
 import { Button } from "~/components/ui/button";
 import authClient from "~/lib/auth-client";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   component: Home,
   loader: ({ context }) => {
     return { user: context.user };
@@ -30,7 +30,10 @@ function Home() {
       {user ? (
         <div className="flex flex-col items-center gap-2">
           <p>Welcome back, {user.name}!</p>
-          <Link to="/another">Go to Another</Link>
+          <Button type="button" asChild variant={"destructive"} className="mb-2 w-fit" size="lg">
+
+          <Link to="/another">Go</Link>
+          </Button>
           <Button type="button" asChild className="mb-2 w-fit" size="lg">
             <Link to="/dashboard">Go to Dashboard</Link>
           </Button>

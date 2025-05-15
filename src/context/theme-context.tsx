@@ -26,19 +26,24 @@ export function ThemeProvider({
   storageKey = 'vite-ui-theme',
   ...props
 }: ThemeProviderProps) {
-  const [theme, _setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  )
+  const [theme, _setTheme] = useState<Theme>(() => {
+    if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
+      const savedTheme = localStorage.getItem(storageKey)
+      return (savedTheme as Theme) || defaultTheme
+    }
+    return defaultTheme
+  })
 
   useEffect(() => {
+    if (typeof window === "undefined") return
     const root = window.document.documentElement
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 
     const applyTheme = (theme: Theme) => {
-      root.classList.remove('light', 'dark') // Remove existing theme classes
+      root.classList.remove('light', 'dark')
       const systemTheme = mediaQuery.matches ? 'dark' : 'light'
       const effectiveTheme = theme === 'system' ? systemTheme : theme
-      root.classList.add(effectiveTheme) // Add the new theme class
+      root.classList.add(effectiveTheme)
     }
 
     const handleChange = () => {
@@ -48,14 +53,14 @@ export function ThemeProvider({
     }
 
     applyTheme(theme)
-
     mediaQuery.addEventListener('change', handleChange)
-
     return () => mediaQuery.removeEventListener('change', handleChange)
   }, [theme])
 
   const setTheme = (theme: Theme) => {
-    localStorage.setItem(storageKey, theme)
+    if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
+      localStorage.setItem(storageKey, theme)
+    }
     _setTheme(theme)
   }
 
@@ -71,7 +76,7 @@ export function ThemeProvider({
   )
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
+//// eslint-disable-next-line react-refresh/only-export-components
 export const useTheme = () => {
   const context = useContext(ThemeProviderContext)
 

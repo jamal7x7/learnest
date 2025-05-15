@@ -80,9 +80,14 @@ export function AppearanceForm() {
                 </FormControl>
                 <ChevronDownIcon className='absolute top-2.5 right-3 h-4 w-4 opacity-50' />
               </div>
-              <FormDescription className='font-manrope'>
+              <FormDescription >
                 Set the font you want to use in the dashboard.
               </FormDescription>
+              <FormDescription className=''>
+                قم بتعيين الخط الذي ترغب في استخدامه في لوحة التحكم.
+              </FormDescription>
+
+
               <FormMessage />
             </FormItem>
           )}

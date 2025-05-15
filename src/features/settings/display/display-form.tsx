@@ -1,45 +1,30 @@
+import { useEffect } from 'react';
 import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '~/utils/show-submitted-data'
+import { sidebarData } from '~/components/layout/data/sidebar-data'
+import { useForm } from '@tanstack/react-form'
+import { zodValidator } from '@tanstack/zod-form-adapter'
 import { Button } from '~/components/ui/button'
 import { Checkbox } from '~/components/ui/checkbox'
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '~/components/ui/form'
+import { Label } from '~/components/ui/label'
+import { useSidebarVisibility } from '~/context/sidebar-visibility-context'
 
-const items = [
-  {
-    id: 'recents',
-    label: 'Recents',
-  },
-  {
-    id: 'home',
-    label: 'Home',
-  },
-  {
-    id: 'applications',
-    label: 'Applications',
-  },
-  {
-    id: 'desktop',
-    label: 'Desktop',
-  },
-  {
-    id: 'downloads',
-    label: 'Downloads',
-  },
-  {
-    id: 'documents',
-    label: 'Documents',
-  },
-] as const
+const allSidebarItems: { id: string; label: string }[] = []
+sidebarData.navGroups.forEach((group) => {
+  group.items.forEach((item) => {
+    if (item.title) {
+      allSidebarItems.push({ id: item.title, label: item.title })
+    }
+    if (item.items) {
+      item.items.forEach((subItem) => {
+        if (subItem.title) {
+          allSidebarItems.push({ id: subItem.title, label: subItem.title })
+        }
+      })
+    }
+  })
+})
+
+const items = allSidebarItems
 
 const displayFormSchema = z.object({
   items: z.array(z.string()).refine((value) => value.some((item) => item), {
@@ -51,71 +36,86 @@ type DisplayFormValues = z.infer<typeof displayFormSchema>
 
 // This can come from your database or API.
 const defaultValues: Partial<DisplayFormValues> = {
-  items: ['recents', 'home'],
+  items: allSidebarItems.length > 1 ? [allSidebarItems[0].id, allSidebarItems[1].id] : allSidebarItems.length === 1 ? [allSidebarItems[0].id] : [],
 }
 
 export function DisplayForm() {
+  const { setVisibleItems } = useSidebarVisibility();
+
   const form = useForm<DisplayFormValues>({
-    resolver: zodResolver(displayFormSchema),
     defaultValues,
-  })
+    onSubmit: async ({ value }) => {
+      setVisibleItems(value.items);
+    },
+    validatorAdapter: zodValidator,
+    validators: {
+      onChange: displayFormSchema,
+    },
+  });
+
+  useEffect(() => {
+    if (defaultValues.items) {
+      setVisibleItems(defaultValues.items);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [setVisibleItems]); // defaultValues.items is stable, setVisibleItems is the dependency
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit((data) => showSubmittedData(data))}
-        className='space-y-8'
-      >
-        <FormField
-          control={form.control}
-          name='items'
-          render={() => (
-            <FormItem>
-              <div className='mb-4'>
-                <FormLabel className='text-base'>Sidebar</FormLabel>
-                <FormDescription>
-                  Select the items you want to display in the sidebar.
-                </FormDescription>
-              </div>
-              {items.map((item) => (
-                <FormField
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        form.handleSubmit()
+      }}
+      className='space-y-8'
+    >
+      <form.Field
+        name='items'
+        children={(field) => (
+          <div>
+            <div className='mb-4'>
+              <Label className='text-base'>Sidebar</Label>
+              <p className='text-sm text-muted-foreground'>
+                Select the items you want to display in the sidebar.
+              </p>
+            </div>
+            {items.map((item) => {
+              const currentSelectedItems = Array.isArray(field.state.value) ? field.state.value : [];
+              return (
+                <div
                   key={item.id}
-                  control={form.control}
-                  name='items'
-                  render={({ field }) => {
-                    return (
-                      <FormItem
-                        key={item.id}
-                        className='flex flex-row items-start space-y-0 space-x-3'
-                      >
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(item.id)}
-                            onCheckedChange={(checked) => {
-                              return checked
-                                ? field.onChange([...field.value, item.id])
-                                : field.onChange(
-                                    field.value?.filter(
-                                      (value) => value !== item.id
-                                    )
-                                  )
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className='font-normal'>
-                          {item.label}
-                        </FormLabel>
-                      </FormItem>
-                    )
-                  }}
-                />
-              ))}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type='submit'>Update display</Button>
-      </form>
-    </Form>
+                  className='flex flex-row items-start space-y-0 space-x-3 mb-2'
+                >
+                  <Checkbox
+                    id={`checkbox-${item.id}`}
+                    checked={currentSelectedItems.includes(item.id)}
+                    onCheckedChange={(checked) => {
+                      let newSelectedItems: string[];
+                      if (checked) {
+                        newSelectedItems = [...currentSelectedItems, item.id];
+                      } else {
+                        newSelectedItems = currentSelectedItems.filter(
+                          (value) => value !== item.id
+                        );
+                      }
+                      field.handleChange(newSelectedItems);
+                    }}
+                  />
+                  <Label htmlFor={`checkbox-${item.id}`} className='font-normal'>
+                    {item.label}
+                  </Label>
+                </div>
+              );
+            })}
+            {field.state.meta.touchedErrors || field.state.meta.errors ? (
+              <p className='text-sm font-medium text-destructive'>
+                {(field.state.meta.touchedErrors || field.state.meta.errors || []).join(', ')}
+              </p>
+            ) : null}
+          </div>
+        )}
+      />
+      <Button type='submit' disabled={form.state.isSubmitting}>Update display</Button>
+    </form>
   )
 }

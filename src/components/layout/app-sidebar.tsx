@@ -10,7 +10,7 @@ import { NavUser } from "~/components/layout/nav-user";
 import { TeamSwitcher } from "~/components/layout/team-switcher";
 import { sidebarData } from './data/sidebar-data'
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ userData, ...props }: React.ComponentProps<typeof Sidebar> & { userData?: { name?: string; email?: string; avatar?: string |null } }) {
   return (
     <Sidebar collapsible='icon' variant='floating' {...props}>
       <SidebarHeader>
@@ -22,7 +22,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={sidebarData.user} />
+        <NavUser user={userData?.name && userData?.email && userData?.avatar ? { name: userData.name, email: userData.email, avatar: userData.avatar || '' } : sidebarData.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

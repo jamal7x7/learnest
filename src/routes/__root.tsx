@@ -8,9 +8,12 @@ import {
 } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getWebRequest } from "@tanstack/react-start/server";
+import { ThemeProvider } from "~/context/theme-context";
+import { FontProvider } from "~/context/font-context";
+import { SidebarVisibilityProvider } from "~/context/sidebar-visibility-context";
 
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+// import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import { auth } from "~/lib/server/auth";
 import appCss from "~/lib/styles/app.css?url";
@@ -57,9 +60,15 @@ export const Route = createRootRouteWithContext<{
 
 function RootComponent() {
   return (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
+    <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
+      <FontProvider>
+        <SidebarVisibilityProvider>
+          <RootDocument>
+            <Outlet />
+          </RootDocument>
+        </SidebarVisibilityProvider>
+      </FontProvider>
+    </ThemeProvider>
   );
 }
 
@@ -80,8 +89,8 @@ function RootDocument({ children }: { readonly children: React.ReactNode }) {
 
         {children}
 
-        <ReactQueryDevtools  buttonPosition="bottom-left" />
-        <TanStackRouterDevtools position="bottom-right" />
+        {/* <ReactQueryDevtools  buttonPosition="bottom-left" /> */}
+        {/* <TanStackRouterDevtools position="bottom-right" /> */}
 
         <Scripts />
       </body>
