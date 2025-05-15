@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { fonts } from '~/config/fonts'
+import { createFontScript, initializeFont } from '~/lib/font-script'
 
 type Font = (typeof fonts)[number]
 
@@ -10,28 +11,29 @@ interface FontContextType {
 
 const FontContext = createContext<FontContextType | undefined>(undefined)
 
+// Script to be injected into the head of the document to prevent FOUC
+export const fontScript = createFontScript()
+
 export const FontProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
+  // Initialize font state with a function to ensure consistent server/client rendering
   const [font, _setFont] = useState<Font>(() => {
-    if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
-      const savedFont = localStorage.getItem('font')
-      return fonts.includes(savedFont as Font) ? (savedFont as Font) : fonts[0]
-    }
-    return fonts[0]
+    // For SSR, return the default font
+    if (typeof window === "undefined") return fonts[0]
+    
+    // For client-side, initialize font and apply it immediately
+    return initializeFont()
   })
 
   useEffect(() => {
     if (typeof window === "undefined") return
-    const applyFont = (font: string) => {
-      const root = document.documentElement
-      root.classList.forEach((cls) => {
-        if (cls.startsWith('font-')) root.classList.remove(cls)
-      })
-      root.classList.add(`font-${font}`)
-    }
-
-    applyFont(font)
+    
+    // Apply font whenever it changes
+    document.documentElement.classList.forEach((cls) => {
+      if (cls.startsWith('font-')) document.documentElement.classList.remove(cls)
+    })
+    document.documentElement.classList.add(`font-${font}`)
   }, [font])
 
   const setFont = (font: Font) => {

@@ -1,34 +1,5 @@
 import { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction, useEffect } from 'react';
-import { sidebarData } from '~/components/layout/data/sidebar-data';
-
-// Helper to calculate all sidebar items
-const allSidebarItems: { id: string; label: string }[] = [];
-sidebarData.navGroups.forEach((group) => {
-  group.items.forEach((item) => {
-    if (item.title) {
-      allSidebarItems.push({ id: item.title, label: item.title });
-    }
-    if (item.items) {
-      item.items.forEach((subItem) => {
-        if (subItem.title) {
-          allSidebarItems.push({ id: subItem.title, label: subItem.title });
-        }
-      });
-    }
-  });
-});
-
-// Calculate default initial items
-const defaultInitialItems: string[] = allSidebarItems.length > 1 ?
-  [
-    allSidebarItems[0].id,
-    allSidebarItems[1].id,
-    allSidebarItems[2].id,
-    allSidebarItems[3].id,
-    allSidebarItems[4].id,
-  ].filter(id => id !== undefined) // Ensure no undefined ids if less than 5 items
-  : allSidebarItems.length === 1 ? [allSidebarItems[0].id].filter(id => id !== undefined) : [];
-
+import { createSidebarScript, initializeSidebarVisibility } from '~/lib/sidebar-script';
 
 interface SidebarVisibilityContextType {
   visibleItems: string[];
@@ -37,20 +8,26 @@ interface SidebarVisibilityContextType {
 
 const SidebarVisibilityContext = createContext<SidebarVisibilityContextType | undefined>(undefined);
 
+// Script to be injected into the head of the document to prevent FOUC
+export const sidebarScript = createSidebarScript();
+
 const SIDEBAR_VISIBILITY_STORAGE_KEY = 'sidebarVisibleItems';
 
 export function SidebarVisibilityProvider({ children }: { children: ReactNode }) {
+  // Initialize sidebar visibility state with a function to ensure consistent server/client rendering
   const [visibleItems, setVisibleItems] = useState<string[]>(() => {
-    try {
-      const storedItems = window.localStorage.getItem(SIDEBAR_VISIBILITY_STORAGE_KEY);
-      return storedItems ? JSON.parse(storedItems) : defaultInitialItems;
-    } catch (error) {
-      console.error('Error reading sidebar visibility from localStorage', error);
-      return defaultInitialItems;
-    }
+    // For SSR, we can't access localStorage, so we'll initialize with an empty array
+    // The actual values will be set on the client side
+    if (typeof window === "undefined") return [];
+    
+    // For client-side, initialize sidebar visibility from script or localStorage
+    return initializeSidebarVisibility();
   });
 
+  // Save sidebar visibility to localStorage whenever it changes
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    
     try {
       window.localStorage.setItem(SIDEBAR_VISIBILITY_STORAGE_KEY, JSON.stringify(visibleItems));
     } catch (error) {

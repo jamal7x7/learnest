@@ -12,7 +12,7 @@ const MyServerFn = createServerFn()
   })
 )
 .handler(async(params) => {
-await new Promise((resolve) => setTimeout(resolve, 3000))
+// await new Promise((resolve) => setTimeout(resolve, 3000))
   const userId = params.data.userId
 
   const data= await db.query.user.findFirst({
