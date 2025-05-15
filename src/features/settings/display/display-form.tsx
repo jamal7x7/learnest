@@ -35,12 +35,12 @@ const displayFormSchema = z.object({
 type DisplayFormValues = z.infer<typeof displayFormSchema>
 
 // This can come from your database or API.
-const defaultValues: Partial<DisplayFormValues> = {
-  items: allSidebarItems.length > 1 ? [allSidebarItems[0].id, allSidebarItems[1].id] : allSidebarItems.length === 1 ? [allSidebarItems[0].id] : [],
-}
-
 export function DisplayForm() {
-  const { setVisibleItems } = useSidebarVisibility();
+  const { visibleItems, setVisibleItems } = useSidebarVisibility();
+
+  const defaultValues: Partial<DisplayFormValues> = {
+    items: visibleItems,
+  };
 
   const form = useForm<DisplayFormValues>({
     defaultValues,
@@ -52,13 +52,6 @@ export function DisplayForm() {
       onChange: displayFormSchema,
     },
   });
-
-  useEffect(() => {
-    if (defaultValues.items) {
-      setVisibleItems(defaultValues.items);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setVisibleItems]); // defaultValues.items is stable, setVisibleItems is the dependency
 
   return (
     <form
