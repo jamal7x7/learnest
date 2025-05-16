@@ -28,6 +28,17 @@ export function createRouter() {
       defaultNotFoundComponent: NotFound,
       scrollRestoration: true,
       defaultStructuralSharing: true,
+      // Enable view transitions by default for smoother page transitions
+      defaultViewTransition: {
+        types: ({ fromLocation, toLocation }) => {
+          // For announcements, use a slide transition
+          if (fromLocation?.pathname.includes('/announcements') || 
+              toLocation?.pathname.includes('/announcements')) {
+            return ['announcement-transition'];
+          }
+          return ['default-transition'];
+        },
+      },
     }),
     queryClient,
   );

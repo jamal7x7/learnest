@@ -28,7 +28,6 @@ import { Route as authOtpImport } from './routes/(auth)/otp'
 import { Route as authLoginImport } from './routes/(auth)/login'
 import { Route as authForgotPasswordImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings/route'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard/route'
 import { Route as AuthenticatedUsersIndexImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTasksIndexImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexImport } from './routes/_authenticated/settings/index'
@@ -36,11 +35,15 @@ import { Route as AuthenticatedHelpCenterIndexImport } from './routes/_authentic
 import { Route as AuthenticatedDashboardIndexImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedChatsIndexImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedAppsIndexImport } from './routes/_authenticated/apps/index'
+import { Route as AuthenticatedAnnouncementsIndexImport } from './routes/_authenticated/announcements/index'
 import { Route as AuthenticatedSettingsNotificationsImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsDisplayImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedCurrentUserCurrentUserIdImport } from './routes/_authenticated/current-user/$currentUserId'
+import { Route as AuthenticatedAnnouncementsAnnouncementIdImport } from './routes/_authenticated/announcements/$announcementId'
+import { Route as AuthenticatedDashboardOldRouteImport } from './routes/_authenticated/dashboard.old/route'
+import { Route as AuthenticatedDashboardOldIndexImport } from './routes/_authenticated/dashboard.old/index'
 
 // Create/Update Routes
 
@@ -146,13 +149,6 @@ const AuthenticatedSettingsRouteRoute = AuthenticatedSettingsRouteImport.update(
   } as any,
 )
 
-const AuthenticatedDashboardRouteRoute =
-  AuthenticatedDashboardRouteImport.update({
-    id: '/dashboard',
-    path: '/dashboard',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-
 const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexImport.update({
   id: '/users/',
   path: '/users/',
@@ -182,9 +178,9 @@ const AuthenticatedHelpCenterIndexRoute =
 
 const AuthenticatedDashboardIndexRoute =
   AuthenticatedDashboardIndexImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedDashboardRouteRoute,
+    id: '/dashboard/',
+    path: '/dashboard/',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
 const AuthenticatedChatsIndexRoute = AuthenticatedChatsIndexImport.update({
@@ -198,6 +194,13 @@ const AuthenticatedAppsIndexRoute = AuthenticatedAppsIndexImport.update({
   path: '/apps/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+
+const AuthenticatedAnnouncementsIndexRoute =
+  AuthenticatedAnnouncementsIndexImport.update({
+    id: '/announcements/',
+    path: '/announcements/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 const AuthenticatedSettingsNotificationsRoute =
   AuthenticatedSettingsNotificationsImport.update({
@@ -234,6 +237,27 @@ const AuthenticatedCurrentUserCurrentUserIdRoute =
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
+const AuthenticatedAnnouncementsAnnouncementIdRoute =
+  AuthenticatedAnnouncementsAnnouncementIdImport.update({
+    id: '/announcements/$announcementId',
+    path: '/announcements/$announcementId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+
+const AuthenticatedDashboardOldRouteRoute =
+  AuthenticatedDashboardOldRouteImport.update({
+    id: '/dashboard/old',
+    path: '/dashboard/old',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+
+const AuthenticatedDashboardOldIndexRoute =
+  AuthenticatedDashboardOldIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedDashboardOldRouteRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -258,13 +282,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/another'
       preLoaderRoute: typeof AnotherImport
       parentRoute: typeof rootRoute
-    }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
-      parentRoute: typeof AuthenticatedRouteImport
     }
     '/_authenticated/settings': {
       id: '/_authenticated/settings'
@@ -364,6 +381,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/dashboard/old': {
+      id: '/_authenticated/dashboard/old'
+      path: '/dashboard/old'
+      fullPath: '/dashboard/old'
+      preLoaderRoute: typeof AuthenticatedDashboardOldRouteImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/announcements/$announcementId': {
+      id: '/_authenticated/announcements/$announcementId'
+      path: '/announcements/$announcementId'
+      fullPath: '/announcements/$announcementId'
+      preLoaderRoute: typeof AuthenticatedAnnouncementsAnnouncementIdImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/current-user/$currentUserId': {
       id: '/_authenticated/current-user/$currentUserId'
       path: '/current-user/$currentUserId'
@@ -399,6 +430,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsNotificationsImport
       parentRoute: typeof AuthenticatedSettingsRouteImport
     }
+    '/_authenticated/announcements/': {
+      id: '/_authenticated/announcements/'
+      path: '/announcements'
+      fullPath: '/announcements'
+      preLoaderRoute: typeof AuthenticatedAnnouncementsIndexImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/apps/': {
       id: '/_authenticated/apps/'
       path: '/apps'
@@ -415,10 +453,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/dashboard/': {
       id: '/_authenticated/dashboard/'
-      path: '/'
-      fullPath: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardIndexImport
-      parentRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteImport
     }
     '/_authenticated/help-center/': {
       id: '/_authenticated/help-center/'
@@ -447,6 +485,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/users'
       preLoaderRoute: typeof AuthenticatedUsersIndexImport
       parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/dashboard/old/': {
+      id: '/_authenticated/dashboard/old/'
+      path: '/'
+      fullPath: '/dashboard/old/'
+      preLoaderRoute: typeof AuthenticatedDashboardOldIndexImport
+      parentRoute: typeof AuthenticatedDashboardOldRouteImport
     }
   }
 }
@@ -477,20 +522,6 @@ const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
   authRouteRouteChildren,
 )
 
-interface AuthenticatedDashboardRouteRouteChildren {
-  AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
-}
-
-const AuthenticatedDashboardRouteRouteChildren: AuthenticatedDashboardRouteRouteChildren =
-  {
-    AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
-  }
-
-const AuthenticatedDashboardRouteRouteWithChildren =
-  AuthenticatedDashboardRouteRoute._addFileChildren(
-    AuthenticatedDashboardRouteRouteChildren,
-  )
-
 interface AuthenticatedSettingsRouteRouteChildren {
   AuthenticatedSettingsAccountRoute: typeof AuthenticatedSettingsAccountRoute
   AuthenticatedSettingsAppearanceRoute: typeof AuthenticatedSettingsAppearanceRoute
@@ -514,27 +545,48 @@ const AuthenticatedSettingsRouteRouteWithChildren =
     AuthenticatedSettingsRouteRouteChildren,
   )
 
+interface AuthenticatedDashboardOldRouteRouteChildren {
+  AuthenticatedDashboardOldIndexRoute: typeof AuthenticatedDashboardOldIndexRoute
+}
+
+const AuthenticatedDashboardOldRouteRouteChildren: AuthenticatedDashboardOldRouteRouteChildren =
+  {
+    AuthenticatedDashboardOldIndexRoute: AuthenticatedDashboardOldIndexRoute,
+  }
+
+const AuthenticatedDashboardOldRouteRouteWithChildren =
+  AuthenticatedDashboardOldRouteRoute._addFileChildren(
+    AuthenticatedDashboardOldRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedDashboardRouteRoute: typeof AuthenticatedDashboardRouteRouteWithChildren
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedDashboardOldRouteRoute: typeof AuthenticatedDashboardOldRouteRouteWithChildren
+  AuthenticatedAnnouncementsAnnouncementIdRoute: typeof AuthenticatedAnnouncementsAnnouncementIdRoute
   AuthenticatedCurrentUserCurrentUserIdRoute: typeof AuthenticatedCurrentUserCurrentUserIdRoute
+  AuthenticatedAnnouncementsIndexRoute: typeof AuthenticatedAnnouncementsIndexRoute
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
+  AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedDashboardRouteRoute:
-    AuthenticatedDashboardRouteRouteWithChildren,
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedDashboardOldRouteRoute:
+    AuthenticatedDashboardOldRouteRouteWithChildren,
+  AuthenticatedAnnouncementsAnnouncementIdRoute:
+    AuthenticatedAnnouncementsAnnouncementIdRoute,
   AuthenticatedCurrentUserCurrentUserIdRoute:
     AuthenticatedCurrentUserCurrentUserIdRoute,
+  AuthenticatedAnnouncementsIndexRoute: AuthenticatedAnnouncementsIndexRoute,
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
+  AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
@@ -547,7 +599,6 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '': typeof AuthenticatedRouteRouteWithChildren
   '/another': typeof AnotherRoute
-  '/dashboard': typeof AuthenticatedDashboardRouteRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
   '/login': typeof authLoginRoute
@@ -561,18 +612,22 @@ export interface FileRoutesByFullPath {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/dashboard/old': typeof AuthenticatedDashboardOldRouteRouteWithChildren
+  '/announcements/$announcementId': typeof AuthenticatedAnnouncementsAnnouncementIdRoute
   '/current-user/$currentUserId': typeof AuthenticatedCurrentUserCurrentUserIdRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/announcements': typeof AuthenticatedAnnouncementsIndexRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
-  '/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/dashboard/old/': typeof AuthenticatedDashboardOldIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -590,11 +645,13 @@ export interface FileRoutesByTo {
   '/404': typeof errors404Route
   '/500': typeof errors500Route
   '/503': typeof errors503Route
+  '/announcements/$announcementId': typeof AuthenticatedAnnouncementsAnnouncementIdRoute
   '/current-user/$currentUserId': typeof AuthenticatedCurrentUserCurrentUserIdRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/announcements': typeof AuthenticatedAnnouncementsIndexRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
@@ -602,6 +659,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/dashboard/old': typeof AuthenticatedDashboardOldIndexRoute
 }
 
 export interface FileRoutesById {
@@ -609,7 +667,6 @@ export interface FileRoutesById {
   '/(auth)': typeof authRouteRouteWithChildren
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/another': typeof AnotherRoute
-  '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteRouteWithChildren
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
   '/(auth)/login': typeof authLoginRoute
@@ -624,11 +681,14 @@ export interface FileRoutesById {
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/dashboard/old': typeof AuthenticatedDashboardOldRouteRouteWithChildren
+  '/_authenticated/announcements/$announcementId': typeof AuthenticatedAnnouncementsAnnouncementIdRoute
   '/_authenticated/current-user/$currentUserId': typeof AuthenticatedCurrentUserCurrentUserIdRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/_authenticated/announcements/': typeof AuthenticatedAnnouncementsIndexRoute
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
@@ -636,6 +696,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/dashboard/old/': typeof AuthenticatedDashboardOldIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -644,7 +705,6 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/another'
-    | '/dashboard'
     | '/settings'
     | '/forgot-password'
     | '/login'
@@ -658,18 +718,22 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/dashboard/old'
+    | '/announcements/$announcementId'
     | '/current-user/$currentUserId'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/announcements'
     | '/apps'
     | '/chats'
-    | '/dashboard/'
+    | '/dashboard'
     | '/help-center'
     | '/settings/'
     | '/tasks'
     | '/users'
+    | '/dashboard/old/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -686,11 +750,13 @@ export interface FileRouteTypes {
     | '/404'
     | '/500'
     | '/503'
+    | '/announcements/$announcementId'
     | '/current-user/$currentUserId'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/announcements'
     | '/apps'
     | '/chats'
     | '/dashboard'
@@ -698,12 +764,12 @@ export interface FileRouteTypes {
     | '/settings'
     | '/tasks'
     | '/users'
+    | '/dashboard/old'
   id:
     | '__root__'
     | '/(auth)'
     | '/_authenticated'
     | '/another'
-    | '/_authenticated/dashboard'
     | '/_authenticated/settings'
     | '/(auth)/forgot-password'
     | '/(auth)/login'
@@ -718,11 +784,14 @@ export interface FileRouteTypes {
     | '/(errors)/500'
     | '/(errors)/503'
     | '/_authenticated/'
+    | '/_authenticated/dashboard/old'
+    | '/_authenticated/announcements/$announcementId'
     | '/_authenticated/current-user/$currentUserId'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
     | '/_authenticated/settings/notifications'
+    | '/_authenticated/announcements/'
     | '/_authenticated/apps/'
     | '/_authenticated/chats/'
     | '/_authenticated/dashboard/'
@@ -730,6 +799,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
+    | '/_authenticated/dashboard/old/'
   fileRoutesById: FileRoutesById
 }
 
@@ -790,12 +860,15 @@ export const routeTree = rootRoute
     "/_authenticated": {
       "filePath": "_authenticated/route.tsx",
       "children": [
-        "/_authenticated/dashboard",
         "/_authenticated/settings",
         "/_authenticated/",
+        "/_authenticated/dashboard/old",
+        "/_authenticated/announcements/$announcementId",
         "/_authenticated/current-user/$currentUserId",
+        "/_authenticated/announcements/",
         "/_authenticated/apps/",
         "/_authenticated/chats/",
+        "/_authenticated/dashboard/",
         "/_authenticated/help-center/",
         "/_authenticated/tasks/",
         "/_authenticated/users/"
@@ -803,13 +876,6 @@ export const routeTree = rootRoute
     },
     "/another": {
       "filePath": "another.tsx"
-    },
-    "/_authenticated/dashboard": {
-      "filePath": "_authenticated/dashboard/route.tsx",
-      "parent": "/_authenticated",
-      "children": [
-        "/_authenticated/dashboard/"
-      ]
     },
     "/_authenticated/settings": {
       "filePath": "_authenticated/settings/route.tsx",
@@ -869,6 +935,17 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/index.tsx",
       "parent": "/_authenticated"
     },
+    "/_authenticated/dashboard/old": {
+      "filePath": "_authenticated/dashboard.old/route.tsx",
+      "parent": "/_authenticated",
+      "children": [
+        "/_authenticated/dashboard/old/"
+      ]
+    },
+    "/_authenticated/announcements/$announcementId": {
+      "filePath": "_authenticated/announcements/$announcementId.tsx",
+      "parent": "/_authenticated"
+    },
     "/_authenticated/current-user/$currentUserId": {
       "filePath": "_authenticated/current-user/$currentUserId.tsx",
       "parent": "/_authenticated"
@@ -889,6 +966,10 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/settings/notifications.tsx",
       "parent": "/_authenticated/settings"
     },
+    "/_authenticated/announcements/": {
+      "filePath": "_authenticated/announcements/index.tsx",
+      "parent": "/_authenticated"
+    },
     "/_authenticated/apps/": {
       "filePath": "_authenticated/apps/index.tsx",
       "parent": "/_authenticated"
@@ -899,7 +980,7 @@ export const routeTree = rootRoute
     },
     "/_authenticated/dashboard/": {
       "filePath": "_authenticated/dashboard/index.tsx",
-      "parent": "/_authenticated/dashboard"
+      "parent": "/_authenticated"
     },
     "/_authenticated/help-center/": {
       "filePath": "_authenticated/help-center/index.tsx",
@@ -916,6 +997,10 @@ export const routeTree = rootRoute
     "/_authenticated/users/": {
       "filePath": "_authenticated/users/index.tsx",
       "parent": "/_authenticated"
+    },
+    "/_authenticated/dashboard/old/": {
+      "filePath": "_authenticated/dashboard.old/index.tsx",
+      "parent": "/_authenticated/dashboard/old"
     }
   }
 }

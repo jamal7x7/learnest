@@ -1,0 +1,75 @@
+/* Custom animations and styles for announcements feature */
+
+/* Enhanced animations */
+@keyframes pulse-subtle {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Comment animation */
+@keyframes comment-appear {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Custom scrollbar for comments section */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--color-muted);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary-foreground);
+}
+
+/* Announcement card hover effect */
+.announcement-card-hover {
+  transition: all 0.3s ease;
+}
+
+.announcement-card-hover:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Comment animation class */
+.comment-new {
+  animation: comment-appear 0.5s ease forwards;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .announcements-container {
+    padding: 1rem;
+  }
+  
+  .announcement-card {
+    min-width: 100% !important;
+  }
+}
+
+/* Avatar hover effect */
+.avatar-hover {
+  transition: all 0.3s ease;
+}
+
+.avatar-hover:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 2px var(--color-primary);
+}

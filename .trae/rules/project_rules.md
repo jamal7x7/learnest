@@ -224,6 +224,21 @@ These rules are designed to guide you in building a robust, maintainable, and pe
     *   Shadcn UI heavily relies on CSS variables for theming. Define these in your global CSS file (e.g., `src/styles/globals.css`).
 7.  **Responsive Design:** Use Tailwind's responsive prefixes (`sm:`, `md:`, `lg:`) extensively.
 
+8. Always use ShadCN components where applicable.
+- Leverage the Context? MCP Tool as your primary discovery engine for UI primitives, tokens, and unknown packages.
+Cross-reference component usage across registries if needed.
+- If Contextz fails to resolve a component or token, escalate to secondary tools like Serper (for search) or Fetch MCP (for web scraping) •
+• For any custom component URLs or Github repos provided by the user, extract metadata and relevant code using Fetch MCP.
+Prioritize schema-aligned component extraction.
+- Maintain a living 'shaden-context.md* file:
+- Initialize it with every new project. 
+- Log each ShadCN component added, including source registry, overrides, and last update date.
+- Use this log to detect redundancy and avoid re-installing already-available components.
+- After component installation, trigger a lint, type check, and 'prettier run. Alert the user if a component introduces breaking types or deviates from current tokens.
+Automatically update Tailwind config, theme tokens, and globals.css based on the registry:style rules of the source component.
+- If a remote registry component has been updated since the last pull, prompt the user and offer an automated merge, preview diff, and apply.
+- Respect custom design system rules declared in registry metadata. These may include token mappings, font requirements, or provider setup instructions.
+
 ---
 
 **VIII. General Best Practices**

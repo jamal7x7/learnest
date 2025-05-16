@@ -1,5 +1,6 @@
 import {
   IconBarrierBlock,
+  IconBrandLine,
   IconBrowserCheck,
   IconBug,
   IconChecklist,
@@ -51,8 +52,13 @@ export const sidebarData: SidebarData = {
       items: [
         {
           title: 'Dashboard',
-          url: '/',
+          url: '/dashboard',
           icon: IconLayoutDashboard,
+        },
+        {
+          title: 'Announcements',
+          url: '/announcements',
+          icon: IconBrandLine,
         },
         {
           title: 'Tasks',
