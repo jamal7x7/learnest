@@ -2,14 +2,17 @@ import { createFileRoute } from '@tanstack/react-router';
 import { AnnouncementDetail } from '~/features/announcements/AnnouncementDetail';
 import { ANNOUNCEMENTS } from '~/features/announcements/data/announcements';
 import * as React from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const Route = createFileRoute("/_authenticated/announcements/$announcementId")({
   component: AnnouncementDetailRoute,
+  
 });
 
 function AnnouncementDetailRoute() {
   const { announcementId } = Route.useParams() as { announcementId: string };
   const navigate = Route.useNavigate();
+  const queryClient = useQueryClient();
   
   // Get read and bookmarked state from localStorage
   const [readAnnouncements, setReadAnnouncements] = React.useState<Record<string, boolean>>(() => {
@@ -74,6 +77,10 @@ function AnnouncementDetailRoute() {
           localStorage.setItem('bookmarkedAnnouncements', JSON.stringify(newBookmarkedAnnouncements));
         }
         
+        // Get the stored scroll position from the query cache
+        const scrollPosition = queryClient.getQueryData(['announcements', 'scrollPosition']) || 0;
+        
+        // Navigate back to the announcements list
         navigate({ to: '/announcements' });
       }}
     />

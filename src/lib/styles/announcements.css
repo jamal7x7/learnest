@@ -44,8 +44,8 @@
 }
 
 .announcement-card-hover:hover {
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+  box-shadow: 0 5px 15px -5px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 /* Comment animation class */
@@ -72,4 +72,32 @@
 .avatar-hover:hover {
   transform: scale(1.1);
   box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+/* Status counters */
+.status-counter {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  background-color: var(--color-muted);
+  transition: all 0.2s ease;
+}
+
+.status-counter:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Read/Bookmark indicators */
+.read-indicator, .bookmark-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.read-indicator:hover, .bookmark-indicator:hover {
+  transform: scale(1.2);
 }

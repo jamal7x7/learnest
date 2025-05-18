@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { IconCheck, IconX } from '@tabler/icons-react'
+import { IconCheck } from '@tabler/icons-react'
+import { IconX } from '@tabler/icons-react'
 import { showSubmittedData } from '~/utils/show-submitted-data'
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'

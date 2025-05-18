@@ -156,7 +156,10 @@ export function AnnouncementDetail({ announcement, onBack }: AnnouncementDetailP
           variant="ghost"
           size="icon"
           className="hover:scale-105 transition-transform"
-          onClick={onBack}
+          onClick={() => {
+            // Use onBack callback which will handle navigation
+            onBack();
+          }}
           aria-label="Back"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -220,8 +223,8 @@ export function AnnouncementDetail({ announcement, onBack }: AnnouncementDetailP
       <Card 
         className={cn(
           "mb-6 w-full sm:min-w-[42rem] animate-slide-in shadow-md hover:shadow-lg transition-all duration-300 announcement-card-hover",
-          isRead ? "border-l-4 border-primary/30" : "",
-          isBookmarked ? "border-r-4 border-yellow-500/30" : ""
+          isRead ? "border-1 border-primary/30" : "",
+          isBookmarked ? "border-1 border-yellow-500/30" : ""
         )}
         style={{ viewTransitionName: `announcement-card-${announcement.id}` }}
       >
@@ -232,12 +235,12 @@ export function AnnouncementDetail({ announcement, onBack }: AnnouncementDetailP
               style={{ viewTransitionName: `announcement-avatar-${announcement.id}` }}
             >
               <AvatarImage
-                src={announcement.avatar || `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURIComponent(announcement.author)}`}
+                src={announcement.avatar || `https://api.dicebear.com/9.x/shapes/svg?seed=${encodeURIComponent(announcement.author)}`}
                 alt={announcement.author}
                 onError={e => {
                   const target = e.currentTarget as HTMLImageElement;
                   target.onerror = null;
-                  target.src = `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURIComponent(announcement.author)}`;
+                  target.src = `https://api.dicebear.com/9.x/shapes/svg?seed=${encodeURIComponent(announcement.author)}`;
                 }}
               />
               <AvatarFallback>
@@ -264,24 +267,28 @@ export function AnnouncementDetail({ announcement, onBack }: AnnouncementDetailP
       </Card>
       <div className="mt-8 animate-fade-in">
         <div className="font-semibold text-xl mb-4">Comments</div>
-        <form className="mb-6 flex flex-col sm:flex-row gap-3" onSubmit={handleCommentSubmit}>
-          <div className="relative flex-1">
-            <Textarea
-              className="min-h-[80px] resize-none pr-10 focus-visible:ring-2"
-              placeholder="Add a comment..."
-              value={commentInput}
-              onChange={e => setCommentInput(e.target.value)}
-            />
-          </div>
-          <Button 
-            type="submit" 
-            className="sm:self-end transition-all hover:scale-105" 
-            disabled={!commentInput.trim()}
-          >
-            <Send className="w-4 h-4 mr-2" />
-            Comment
-          </Button>
-        </form>
+        <Card className="mb-6 w-full max-w-2xl mx-auto shadow-lg border border-muted/30 bg-background/80 backdrop-blur-sm">
+          <CardContent className="p-4">
+            <form className="flex flex-col sm:flex-row gap-3 items-end" onSubmit={handleCommentSubmit}>
+              <div className="relative flex-1">
+                <Textarea
+                  className="min-h-[80px] resize-none pr-10 focus-visible:ring-2 rounded-lg border-muted/40 bg-muted/10 transition-all focus:bg-background/90 focus:shadow-lg"
+                  placeholder="Add a comment..."
+                  value={commentInput}
+                  onChange={e => setCommentInput(e.target.value)}
+                />
+              </div>
+              <Button
+                type="submit"
+                className="sm:self-end transition-all hover:scale-105 flex items-center gap-2 px-6 py-2 rounded-lg shadow-md bg-primary text-primary-foreground font-semibold disabled:opacity-60 disabled:cursor-not-allowed animate-bounce-subtle"
+                disabled={!commentInput.trim()}
+              >
+                <Send className="w-4 h-4 mr-2" />
+                Comment
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
         <Separator className="my-4" />
         <div className="flex flex-col gap-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar animate-fade-in-scale">
           {comments.length === 0 && (
@@ -290,13 +297,13 @@ export function AnnouncementDetail({ announcement, onBack }: AnnouncementDetailP
           {comments.slice().reverse().map((c) => (
             <Card 
               id={`comment-${c.id}`}
-              key={c.id} 
+              key={c.id}
               className={`p-4 flex flex-col gap-3 hover:shadow-md transition-all ${c.id === `c${comments.length}` ? 'animate-comment-slide-in border-l-4 border-primary' : 'hover:border-l-4 hover:border-primary/50'}`}
             >
               <div className="flex items-center gap-3">
                 <Avatar className="w-8 h-8 flex-shrink-0 ring-1 ring-primary/10">
                   <AvatarImage
-                    src={c.avatar || `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${encodeURIComponent(c.author)}`}
+                    src={(c.avatar || `https://avatar.iran.liara.run/public/boy?username=`+ c.author) ??`https://api.dicebear.com/7.x/fun-emoji/svg?seed=${encodeURIComponent(c.author)}`}
                     alt={c.author}
                   />
                   <AvatarFallback>

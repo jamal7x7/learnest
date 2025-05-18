@@ -1,4 +1,5 @@
-import { IconMailPlus, IconUserPlus } from '@tabler/icons-react'
+import { IconMailPlus } from '@tabler/icons-react'
+import { IconUserPlus } from '@tabler/icons-react'
 import { Button } from '~/components/ui/button'
 import { useUsers } from '../context/users-context'
 

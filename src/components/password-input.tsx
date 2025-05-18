@@ -1,5 +1,6 @@
 import * as React from 'react'
-import { IconEye, IconEyeOff } from '@tabler/icons-react'
+import {IconEye}  from '@tabler/icons-react'
+import {IconEyeOff}  from '@tabler/icons-react'
 import { cn } from "~/lib/utils";
 import { Button } from './ui/button'
 

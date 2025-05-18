@@ -67,7 +67,8 @@ function generateComments(announcementId: string) {
       author,
       content,
       date: `2025-05-${String(10 + ((i + 1) % 20)).padStart(2, '0')}`,
-      avatar: `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURIComponent(author)}`,
+      // avatar: `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURIComponent(author)}`,
+      avatar: ``,
     };
   });
 }
@@ -79,7 +80,7 @@ export const ANNOUNCEMENTS = Array.from({ length: 20 }, (_, i) => {
   return {
     id,
     author,
-    avatar: `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURIComponent(author)}`,
+    avatar: ``,
     content,
     date: `2025-05-${String(16 - i).padStart(2, '0')}`,
     comments: generateComments(id),
