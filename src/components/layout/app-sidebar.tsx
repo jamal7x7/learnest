@@ -12,11 +12,11 @@ import { sidebarData } from './data/sidebar-data'
 
 export function AppSidebar({ userData, ...props }: React.ComponentProps<typeof Sidebar> & { userData?: { name?: string; email?: string; avatar?: string |null } }) {
   return (
-    <Sidebar collapsible='icon' variant='floating' {...props}>
+    <Sidebar  collapsible='icon' variant='floating' {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={sidebarData.teams} />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent >
         {sidebarData.navGroups.map((props) => (
           <NavGroup key={props.title} {...props} />
         ))}
