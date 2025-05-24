@@ -1,0 +1,229 @@
+/* Comment Form Styles */
+
+@keyframes success-pulse {
+  0% { 
+    background-color: hsl(var(--primary)); 
+    transform: scale(1);
+  }
+  50% { 
+    background-color: hsl(142 76% 36%); 
+    transform: scale(1.02);
+  }
+  100% { 
+    background-color: hsl(var(--primary)); 
+    transform: scale(1);
+  }
+}
+
+.success-pulse {
+  animation: success-pulse 0.6s ease-in-out;
+}
+
+@keyframes editor-focus {
+  0% { 
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    border-color: hsl(var(--border));
+  }
+  100% { 
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: hsl(var(--primary));
+  }
+}
+
+.editor-focus {
+  animation: editor-focus 0.2s ease-out forwards;
+}
+
+@keyframes editor-blur {
+  0% { 
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    border-color: hsl(var(--primary));
+  }
+  100% { 
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    border-color: hsl(var(--border));
+  }
+}
+
+.editor-blur {
+  animation: editor-blur 0.2s ease-out forwards;
+}
+
+/* Enhanced preview transitions */
+.preview-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.preview-transition.active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.preview-transition.inactive {
+  transform: translateY(10px);
+  opacity: 0;
+}
+
+/* Toolbar animations */
+@keyframes toolbar-slide-in {
+  0% { 
+    opacity: 0; 
+    transform: translateY(-10px);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+.toolbar-slide-in {
+  animation: toolbar-slide-in 0.3s ease-out;
+}
+
+@keyframes button-press {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+.button-press {
+  animation: button-press 0.1s ease-out;
+}
+
+/* Character counter animations */
+@keyframes counter-warning {
+  0% { color: hsl(var(--muted-foreground)); }
+  100% { color: hsl(38 92% 50%); }
+}
+
+@keyframes counter-danger {
+  0% { color: hsl(38 92% 50%); }
+  100% { color: hsl(var(--destructive)); }
+}
+
+.counter-warning {
+  animation: counter-warning 0.3s ease-out forwards;
+}
+
+.counter-danger {
+  animation: counter-danger 0.3s ease-out forwards;
+}
+
+/* Progress bar animation */
+@keyframes progress-fill {
+  0% { 
+    transform: scaleX(0);
+    opacity: 0.6;
+  }
+  100% { 
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+.progress-fill {
+  animation: progress-fill 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.progress-animate {
+  animation: progress-fill 0.3s ease-out;
+}
+
+/* Emoji picker animation */
+@keyframes emoji-pop {
+  0% { 
+    transform: scale(0.8) translateY(10px); 
+    opacity: 0; 
+  }
+  70% { 
+    transform: scale(1.05) translateY(-2px); 
+    opacity: 1; 
+  }
+  100% { 
+    transform: scale(1) translateY(0); 
+    opacity: 1; 
+  }
+}
+
+.emoji-pop {
+  animation: emoji-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Mention picker animation */
+@keyframes mention-slide {
+  0% { 
+    opacity: 0; 
+    transform: translateY(8px);
+  }
+  100% { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
+}
+
+.mention-slide {
+  animation: mention-slide 0.2s ease-out;
+}
+
+/* Loading skeleton */
+@keyframes skeleton-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+.skeleton-pulse {
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Tab transition */
+@keyframes tab-slide {
+  0% { 
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  100% { 
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.tab-slide {
+  animation: tab-slide 0.2s ease-out;
+}
+
+/* Hover effects */
+.hover-lift {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Focus ring improvements */
+.focus-ring {
+  transition: box-shadow 0.2s ease-out;
+}
+
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--primary));
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .mobile-stack {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .mobile-full {
+    width: 100%;
+  }
+  
+  .mobile-text-sm {
+    font-size: 0.875rem;
+  }
+}

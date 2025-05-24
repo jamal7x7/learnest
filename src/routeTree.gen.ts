@@ -31,6 +31,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedUsersIndexImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTasksIndexImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedPlateEditorIndexImport } from './routes/_authenticated/plate-editor/index'
 import { Route as AuthenticatedHelpCenterIndexImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedDashboardIndexImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedChatsIndexImport } from './routes/_authenticated/chats/index'
@@ -168,6 +169,13 @@ const AuthenticatedSettingsIndexRoute = AuthenticatedSettingsIndexImport.update(
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any,
 )
+
+const AuthenticatedPlateEditorIndexRoute =
+  AuthenticatedPlateEditorIndexImport.update({
+    id: '/plate-editor/',
+    path: '/plate-editor/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 const AuthenticatedHelpCenterIndexRoute =
   AuthenticatedHelpCenterIndexImport.update({
@@ -465,6 +473,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHelpCenterIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/plate-editor/': {
+      id: '/_authenticated/plate-editor/'
+      path: '/plate-editor'
+      fullPath: '/plate-editor'
+      preLoaderRoute: typeof AuthenticatedPlateEditorIndexImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/settings/': {
       id: '/_authenticated/settings/'
       path: '/'
@@ -570,6 +585,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
+  AuthenticatedPlateEditorIndexRoute: typeof AuthenticatedPlateEditorIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
 }
@@ -588,6 +604,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
+  AuthenticatedPlateEditorIndexRoute: AuthenticatedPlateEditorIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
 }
@@ -624,6 +641,7 @@ export interface FileRoutesByFullPath {
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
+  '/plate-editor': typeof AuthenticatedPlateEditorIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
@@ -656,6 +674,7 @@ export interface FileRoutesByTo {
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
+  '/plate-editor': typeof AuthenticatedPlateEditorIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
@@ -693,6 +712,7 @@ export interface FileRoutesById {
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
+  '/_authenticated/plate-editor/': typeof AuthenticatedPlateEditorIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
@@ -730,6 +750,7 @@ export interface FileRouteTypes {
     | '/chats'
     | '/dashboard'
     | '/help-center'
+    | '/plate-editor'
     | '/settings/'
     | '/tasks'
     | '/users'
@@ -761,6 +782,7 @@ export interface FileRouteTypes {
     | '/chats'
     | '/dashboard'
     | '/help-center'
+    | '/plate-editor'
     | '/settings'
     | '/tasks'
     | '/users'
@@ -796,6 +818,7 @@ export interface FileRouteTypes {
     | '/_authenticated/chats/'
     | '/_authenticated/dashboard/'
     | '/_authenticated/help-center/'
+    | '/_authenticated/plate-editor/'
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
@@ -870,6 +893,7 @@ export const routeTree = rootRoute
         "/_authenticated/chats/",
         "/_authenticated/dashboard/",
         "/_authenticated/help-center/",
+        "/_authenticated/plate-editor/",
         "/_authenticated/tasks/",
         "/_authenticated/users/"
       ]
@@ -984,6 +1008,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/help-center/": {
       "filePath": "_authenticated/help-center/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/plate-editor/": {
+      "filePath": "_authenticated/plate-editor/index.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/settings/": {

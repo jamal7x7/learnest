@@ -2,17 +2,19 @@ export interface Comment {
   id: string;
   author: string;
   content: string;
-  date: string;
-  time: string;
+  date?: string;
+  time?: string;
   avatar?: string;
   likes?: number;
   hasLiked?: boolean;
-  reactions?: string[];
-  replies?: Comment[];
+  hasDisliked?: boolean;
+  dislikeCount?: number;
   isAuthor?: boolean;
   role?: string;
-  isReply?: boolean;
   timeAgo?: string;
+  isReply?: boolean;
+  replies?: Comment[];
+  reactions?: Array<{ type: string; count: number; users: string[] }>;
 }
 
 export interface Announcement {

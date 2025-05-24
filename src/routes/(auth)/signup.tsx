@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select";
 import authClient from "~/lib/auth-client";
 
 export const Route = createFileRoute("/(auth)/signup")({
@@ -26,8 +27,9 @@ function SignupForm() {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirm_password") as string;
+    const role = formData.get("role") as string;
 
-    if (!name || !email || !password || !confirmPassword) return;
+    if (!name || !email || !password || !confirmPassword || !role) return;
 
     if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match");
@@ -43,6 +45,7 @@ function SignupForm() {
         email,
         password,
         callbackURL: redirectUrl,
+        role,
       },
       {
         onError: (ctx) => {
@@ -114,6 +117,21 @@ function SignupForm() {
                 readOnly={isLoading}
                 required
               />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="role">Role</Label>
+              <Select name="role" defaultValue="student" required>
+                <SelectTrigger id="role">
+                  <SelectValue placeholder="Select your role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="student">Student</SelectItem>
+                  <SelectItem value="parent">Parent</SelectItem>
+                  <SelectItem value="teacher">Teacher</SelectItem>
+                  <SelectItem value="staff">Staff</SelectItem>
+                  <SelectItem value="dev">Developer</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <Button type="submit" className="mt-2 w-full" size="lg" disabled={isLoading}>
               {isLoading && <LoaderCircle className="animate-spin" />}

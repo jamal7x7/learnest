@@ -2,7 +2,10 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { reactStartCookies } from "better-auth/react-start";
 
+import { admin } from "better-auth/plugins"
+
 import { db } from "./db";
+import { ac, roles } from "./permissions";
 
 export const auth = betterAuth({
   baseURL: process.env.VITE_BASE_URL,
@@ -11,7 +14,15 @@ export const auth = betterAuth({
   }),
 
   // https://www.better-auth.com/docs/integrations/tanstack#usage-tips
-  plugins: [reactStartCookies()],
+  plugins: [ 
+    admin({
+      ac,
+      roles,
+      adminRoles: ["teacher", "staff", "dev"],
+      defaultRole: "student"
+    }),
+    reactStartCookies()
+  ],
 
   // https://www.better-auth.com/docs/concepts/session-management#session-caching
   session: {
@@ -38,3 +49,4 @@ export const auth = betterAuth({
     enabled: true,
   },
 });
+

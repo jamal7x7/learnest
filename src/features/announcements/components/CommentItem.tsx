@@ -8,7 +8,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Textarea } from "~/components/ui/textarea";
 import { cn } from "~/lib/utils";
 import { Comment } from "../types";
-import { MoreHorizontal, Reply, ThumbsUp, Flag, Edit, Trash2, Send, Clock } from "lucide-react";
+import { MoreHorizontal, Reply, ThumbsUp, Flag, Edit, Trash2, Send, Clock, Smile, ThumbsDown } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
+import { Separator } from "~/components/ui/separator";
 
 interface CommentItemProps {
   comment: Comment;
@@ -50,6 +52,20 @@ export function CommentItem({
   // Format the date for display
   const formattedDate = timeAgo || date;
 
+  const [localHasLiked, setLocalHasLiked] = useState(comment.hasLiked || false);
+  const [localLikes, setLocalLikes] = useState(comment.likes || 0);
+  const [animateLike, setAnimateLike] = useState(false);
+  
+  const handleLike = () => {
+    setLocalHasLiked(!localHasLiked);
+    setLocalLikes(localHasLiked ? localLikes - 1 : localLikes + 1);
+    setAnimateLike(true);
+    setTimeout(() => setAnimateLike(false), 500);
+    if (onReaction) {
+      onReaction(id, 'like');
+    }
+  };
+  
   const handleReactionClick = (reactionName: string) => {
     if (onReaction) {
       onReaction(id, reactionName);
@@ -177,58 +193,98 @@ export function CommentItem({
         </div>
         
         <div className="flex items-center gap-1 ml-12">
-          <div className="relative">
+          <div className="flex items-center gap-1">
+            <Button 
+              variant={localHasLiked ? "default" : "ghost"}
+              size="sm" 
+              className={cn(
+                "h-8 px-2 gap-1",
+                localHasLiked ? "bg-primary/10 hover:bg-primary/20" : "text-muted-foreground hover:text-foreground",
+                animateLike ? "animate-pulse" : ""
+              )}
+              onClick={handleLike}
+            >
+              <ThumbsUp className={cn("h-4 w-4", localHasLiked ? "text-primary" : "")} />
+              {localLikes > 0 && (
+                <span className={cn("text-xs font-medium", localHasLiked ? "text-primary" : "")}>
+                  {localLikes}
+                </span>
+              )}
+            </Button>
+            
             <Button 
               variant="ghost" 
               size="sm" 
               className="h-8 px-2 text-muted-foreground hover:text-foreground"
-              onClick={() => setShowReactions(!showReactions)}
+              onClick={() => onDislike?.(id)}
             >
-              <ThumbsUp className="h-4 w-4 mr-1" />
-              <span className="text-xs">React</span>
+              <ThumbsDown className="h-4 w-4" />
             </Button>
             
-            {showReactions && (
-              <div className="absolute -top-12 left-0 flex items-center gap-1 bg-background p-1 rounded-full shadow-lg border border-muted z-10 animate-fade-in-scale">
-                {REACTIONS.map((reaction) => (
-                  <Button
-                    key={reaction.name}
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 rounded-full hover:bg-muted"
-                    onClick={() => handleReactionClick(reaction.name)}
-                  >
-                    {reaction.emoji}
-                  </Button>
-                ))}
-              </div>
-            )}
-          </div>
-          
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 px-2 text-muted-foreground hover:text-foreground"
-            onClick={() => setIsReplying(!isReplying)}
-          >
-            <Reply className="h-4 w-4 mr-1" />
-            <span className="text-xs">Reply</span>
-          </Button>
-          
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+            <Separator orientation="vertical" className="h-5 mx-1" />
+            
+            <Popover open={showReactions} onOpenChange={setShowReactions}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="h-8 px-2 text-muted-foreground hover:text-foreground"
                 >
-                  <Flag className="h-4 w-4" />
+                  <Smile className="h-4 w-4 mr-1" />
+                  <span className="text-xs">React</span>
                 </Button>
-              </TooltipTrigger>
-              <TooltipContent>Report comment</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-1" align="start">
+                <div className="flex items-center gap-1">
+                  {REACTIONS.map((reaction) => (
+                    <TooltipProvider key={reaction.name}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 rounded-full hover:bg-muted"
+                            onClick={() => handleReactionClick(reaction.name)}
+                          >
+                            {reaction.emoji}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">{reaction.name}</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+          
+          <div className="flex items-center gap-1 ml-auto">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-8 px-2 text-muted-foreground hover:text-foreground"
+              onClick={() => setIsReplying(!isReplying)}
+            >
+              <Reply className="h-4 w-4 mr-1" />
+              <span className="text-xs">Reply</span>
+            </Button>
+            
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 px-2 text-muted-foreground hover:text-foreground"
+                  >
+                    <Flag className="h-4 w-4 mr-1" />
+                    <span className="text-xs">Report</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Report comment</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
         
         {reactions && reactions.length > 0 && (

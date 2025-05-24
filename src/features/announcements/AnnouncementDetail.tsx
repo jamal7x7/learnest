@@ -14,6 +14,131 @@ export function AnnouncementDetail({ announcement, onBack }: AnnouncementDetailP
   const [isBookmarked, setIsBookmarked] = React.useState(announcement.isBookmarked ?? false);
   const [showReadAnimation, setShowReadAnimation] = React.useState(false);
   const [showBookmarkAnimation, setShowBookmarkAnimation] = React.useState(false);
+  
+  // Handle like/dislike functionality
+  function handleLikeComment(commentId: string) {
+    setComments(prevComments => 
+      prevComments.map(comment => {
+        if (comment.id === commentId) {
+          const wasLiked = comment.hasLiked || false;
+          return {
+            ...comment,
+            likes: wasLiked ? (comment.likes || 1) - 1 : (comment.likes || 0) + 1,
+            hasLiked: !wasLiked
+          };
+        } else if (comment.replies) {
+          // Check in replies
+          const updatedReplies = comment.replies.map(reply => {
+            if (reply.id === commentId) {
+              const wasLiked = reply.hasLiked || false;
+              return {
+                ...reply,
+                likes: wasLiked ? (reply.likes || 1) - 1 : (reply.likes || 0) + 1,
+                hasLiked: !wasLiked
+              };
+            }
+            return reply;
+          });
+          return { ...comment, replies: updatedReplies };
+        }
+        return comment;
+      })
+    );
+  }
+  
+  function handleDislikeComment(commentId: string) {
+    // Similar implementation as like but for dislikes
+    // For now just toggle the dislike state without counter
+    setComments(prevComments => 
+      prevComments.map(comment => {
+        if (comment.id === commentId) {
+          return {
+            ...comment,
+            hasDisliked: !(comment.hasDisliked || false)
+          };
+        } else if (comment.replies) {
+          const updatedReplies = comment.replies.map(reply => {
+            if (reply.id === commentId) {
+              return {
+                ...reply,
+                hasDisliked: !(reply.hasDisliked || false)
+              };
+            }
+            return reply;
+          });
+          return { ...comment, replies: updatedReplies };
+        }
+        return comment;
+      })
+    );
+  }
+  
+  function handleReplyToComment(commentId: string, content: string) {
+    if (!content.trim()) return;
+    
+    const newReply = {
+      id: `reply-${Date.now()}`,
+      author: 'You',
+      content,
+      date: new Date().toISOString().slice(0, 10),
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      avatar: 'https://api.dicebear.com/9.x/fun-emoji/svg?seed=You',
+      likes: 0,
+      hasLiked: false,
+      isAuthor: true,
+      role: 'Student',
+      timeAgo: 'Just now',
+      isReply: true
+    };
+    
+    setComments(prevComments => 
+      prevComments.map(comment => {
+        if (comment.id === commentId) {
+          return {
+            ...comment,
+            replies: [...(comment.replies || []), newReply]
+          };
+        }
+        return comment;
+      })
+    );
+  }
+  
+  function handleEditComment(commentId: string, content: string) {
+    if (!content.trim()) return;
+    
+    setComments(prevComments => 
+      prevComments.map(comment => {
+        if (comment.id === commentId) {
+          return { ...comment, content };
+        } else if (comment.replies) {
+          const updatedReplies = comment.replies.map(reply => {
+            if (reply.id === commentId) {
+              return { ...reply, content };
+            }
+            return reply;
+          });
+          return { ...comment, replies: updatedReplies };
+        }
+        return comment;
+      })
+    );
+  }
+  
+  function handleDeleteComment(commentId: string) {
+    setComments(prevComments => 
+      prevComments.filter(comment => {
+        if (comment.id === commentId) {
+          return false; // Remove this comment
+        } else if (comment.replies) {
+          // Filter out the reply if it matches the ID
+          const updatedReplies = comment.replies.filter(reply => reply.id !== commentId);
+          return { ...comment, replies: updatedReplies };
+        }
+        return true;
+      })
+    );
+  }
 
   React.useEffect(() => {
     document.body.classList.add('fade-in');
@@ -37,13 +162,20 @@ export function AnnouncementDetail({ announcement, onBack }: AnnouncementDetailP
     e.preventDefault();
     if (!commentInput.trim()) return;
     
-    // Create new comment object
+    // Create new comment object with additional properties for enhanced features
     const newComment = {
       id: `c${comments.length + 1}`,
       author: 'You',
       content: commentInput,
       date: new Date().toISOString().slice(0, 10),
-      avatar: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=You'
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      avatar: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=You',
+      likes: 0,
+      hasLiked: false,
+      isAuthor: true,
+      role: 'Student',
+      timeAgo: 'Just now',
+      replies: []
     };
     
     // Use view transitions API for smooth comment addition
@@ -132,15 +264,32 @@ export function AnnouncementDetail({ announcement, onBack }: AnnouncementDetailP
         
         {/* Comment form */}
         <CommentForm
-          value={commentInput}
-          onChange={setCommentInput}
-          onSubmit={handleCommentSubmit}
-        />
+        value={commentInput}
+        onChange={setCommentInput}
+        onSubmit={handleCommentSubmit}
+        isSubmitting={false}
+        showFormatting={true}
+        maxLength={500}
+        userAvatar={"https://api.dicebear.com/7.x/fun-emoji/svg?seed=You"}
+        userName="You"
+      />
         
         <Separator className="my-4" />
-        
-        {/* Comments list */}
-        <CommentsList comments={comments} />
+      
+      {/* Comments list */}
+      <CommentsList 
+        comments={comments} 
+        onLike={handleLikeComment}
+        onDislike={handleDislikeComment}
+        onReply={handleReplyToComment}
+        onEdit={handleEditComment}
+        onDelete={handleDeleteComment}
+        onReaction={(id, reaction) => console.log(`Reaction ${reaction} on comment ${id}`)}
+        currentUser={{ name: "You", role: "Student" }}
+        sortOptions={true}
+        defaultSort="recent"
+        pageSize={5}
+      />
       </div>
     </div>
   );

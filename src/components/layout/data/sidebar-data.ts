@@ -4,6 +4,7 @@ import {
   IconBrowserCheck,
   IconBug,
   IconChecklist,
+  IconEdit,
   IconError404,
   IconHelp,
   IconLayoutDashboard,
@@ -81,6 +82,11 @@ export const sidebarData: SidebarData = {
           url: '/users',
           icon: IconUsers,
         },
+        {
+          title: 'Editor',
+          url: '/plate-editor',
+          icon: IconEdit,
+        }
       ],
     },
     {

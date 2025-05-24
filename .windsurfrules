@@ -268,6 +268,8 @@ Automatically update Tailwind config, theme tokens, and globals.css based on the
     *   Use PascalCase for component names.
     *   Use kebab-case for file names.
 
+7. use pnpm for package management
+
 ---
 
 By following these rules and best practices, you'll be well-equipped to build robust, maintainable, and performant web applications with this modern JavaScript/TypeScript stack. Remember to consult the official documentation for each library, as they are the ultimate source of truth, especially given the rapid evolution of the JavaScript ecosystem.

@@ -32,7 +32,7 @@ export function AnnouncementList({
   }, [onToggleBookmark]);
 
   return (
-    <div className="max-w-3xl mx-auto mt-8 px-4 sm:px-6 announcements-container">
+    <div className="sm:w-2xl mx-auto mt-8 px-4 sm:px-6 announcements-container">
       <h1 className="text-3xl font-bold mb-6 animate-fade-in">Announcements</h1>
       
       <AnnouncementStatus 

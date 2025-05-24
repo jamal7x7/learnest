@@ -1,7 +1,7 @@
 import type { Config } from "drizzle-kit";
 
 export default {
-  out: "./drizzle",
+  out: "./src/lib/server/drizzle",
   schema: "./src/lib/server/schema/index.ts",
   breakpoints: true,
   verbose: true,

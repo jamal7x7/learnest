@@ -1,0 +1,20 @@
+DROP TABLE "activity_logs" CASCADE;--> statement-breakpoint
+DROP TABLE "admin" CASCADE;--> statement-breakpoint
+DROP TABLE "announcement_comments" CASCADE;--> statement-breakpoint
+DROP TABLE "announcement_recipients" CASCADE;--> statement-breakpoint
+DROP TABLE "announcement_user_status" CASCADE;--> statement-breakpoint
+DROP TABLE "announcements" CASCADE;--> statement-breakpoint
+DROP TABLE "class_subjects" CASCADE;--> statement-breakpoint
+DROP TABLE "class" CASCADE;--> statement-breakpoint
+DROP TABLE "class_teachers" CASCADE;--> statement-breakpoint
+DROP TABLE "courses" CASCADE;--> statement-breakpoint
+DROP TABLE "feature_flags" CASCADE;--> statement-breakpoint
+DROP TABLE "invitation_code_uses" CASCADE;--> statement-breakpoint
+DROP TABLE "invitation_codes" CASCADE;--> statement-breakpoint
+DROP TABLE "invitations" CASCADE;--> statement-breakpoint
+DROP TABLE "student" CASCADE;--> statement-breakpoint
+DROP TABLE "subject" CASCADE;--> statement-breakpoint
+DROP TABLE "teacher" CASCADE;--> statement-breakpoint
+DROP TABLE "team_invite_codes" CASCADE;--> statement-breakpoint
+DROP TABLE "team_members" CASCADE;--> statement-breakpoint
+DROP TABLE "teams" CASCADE;
