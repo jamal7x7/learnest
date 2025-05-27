@@ -29,6 +29,7 @@ import { Route as authLoginImport } from './routes/(auth)/login'
 import { Route as authForgotPasswordImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings/route'
 import { Route as AuthenticatedUsersIndexImport } from './routes/_authenticated/users/index'
+import { Route as AuthenticatedTeamsIndexImport } from './routes/_authenticated/teams.index'
 import { Route as AuthenticatedTasksIndexImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedPlateEditorIndexImport } from './routes/_authenticated/plate-editor/index'
@@ -153,6 +154,12 @@ const AuthenticatedSettingsRouteRoute = AuthenticatedSettingsRouteImport.update(
 const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexImport.update({
   id: '/users/',
   path: '/users/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+
+const AuthenticatedTeamsIndexRoute = AuthenticatedTeamsIndexImport.update({
+  id: '/teams/',
+  path: '/teams/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
@@ -494,6 +501,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTasksIndexImport
       parentRoute: typeof AuthenticatedRouteImport
     }
+    '/_authenticated/teams/': {
+      id: '/_authenticated/teams/'
+      path: '/teams'
+      fullPath: '/teams'
+      preLoaderRoute: typeof AuthenticatedTeamsIndexImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/users/': {
       id: '/_authenticated/users/'
       path: '/users'
@@ -587,6 +601,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedPlateEditorIndexRoute: typeof AuthenticatedPlateEditorIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
+  AuthenticatedTeamsIndexRoute: typeof AuthenticatedTeamsIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
 }
 
@@ -606,6 +621,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedPlateEditorIndexRoute: AuthenticatedPlateEditorIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
+  AuthenticatedTeamsIndexRoute: AuthenticatedTeamsIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
 }
 
@@ -644,6 +660,7 @@ export interface FileRoutesByFullPath {
   '/plate-editor': typeof AuthenticatedPlateEditorIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
+  '/teams': typeof AuthenticatedTeamsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/dashboard/old/': typeof AuthenticatedDashboardOldIndexRoute
 }
@@ -677,6 +694,7 @@ export interface FileRoutesByTo {
   '/plate-editor': typeof AuthenticatedPlateEditorIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
+  '/teams': typeof AuthenticatedTeamsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/dashboard/old': typeof AuthenticatedDashboardOldIndexRoute
 }
@@ -715,6 +733,7 @@ export interface FileRoutesById {
   '/_authenticated/plate-editor/': typeof AuthenticatedPlateEditorIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
+  '/_authenticated/teams/': typeof AuthenticatedTeamsIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
   '/_authenticated/dashboard/old/': typeof AuthenticatedDashboardOldIndexRoute
 }
@@ -753,6 +772,7 @@ export interface FileRouteTypes {
     | '/plate-editor'
     | '/settings/'
     | '/tasks'
+    | '/teams'
     | '/users'
     | '/dashboard/old/'
   fileRoutesByTo: FileRoutesByTo
@@ -785,6 +805,7 @@ export interface FileRouteTypes {
     | '/plate-editor'
     | '/settings'
     | '/tasks'
+    | '/teams'
     | '/users'
     | '/dashboard/old'
   id:
@@ -821,6 +842,7 @@ export interface FileRouteTypes {
     | '/_authenticated/plate-editor/'
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
+    | '/_authenticated/teams/'
     | '/_authenticated/users/'
     | '/_authenticated/dashboard/old/'
   fileRoutesById: FileRoutesById
@@ -895,6 +917,7 @@ export const routeTree = rootRoute
         "/_authenticated/help-center/",
         "/_authenticated/plate-editor/",
         "/_authenticated/tasks/",
+        "/_authenticated/teams/",
         "/_authenticated/users/"
       ]
     },
@@ -1020,6 +1043,10 @@ export const routeTree = rootRoute
     },
     "/_authenticated/tasks/": {
       "filePath": "_authenticated/tasks/index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/teams/": {
+      "filePath": "_authenticated/teams.index.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/users/": {

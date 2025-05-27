@@ -15,6 +15,27 @@
       "when": 1748077233054,
       "tag": "0001_shocking_colossus",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1748079707925,
+      "tag": "0002_purple_sabretooth",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1748208466709,
+      "tag": "0003_outgoing_machine_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1748232205500,
+      "tag": "0004_stiff_shinobi_shaw",
+      "breakpoints": true
     }
   ]
 }

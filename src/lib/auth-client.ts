@@ -1,5 +1,5 @@
 import { createAuthClient } from "better-auth/react";
-import { adminClient } from "better-auth/client/plugins"
+import { adminClient, organizationClient } from "better-auth/client/plugins"
 import { ac, roles } from "./server/permissions";
 
 const authClient = createAuthClient({
@@ -8,7 +8,12 @@ const authClient = createAuthClient({
     adminClient({
       ac,
       roles
-    })
+    }),
+    organizationClient({
+      teams: {
+          enabled: true
+      }
+  })
   ]
 });
 

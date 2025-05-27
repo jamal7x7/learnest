@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { reactStartCookies } from "better-auth/react-start";
 
-import { admin } from "better-auth/plugins"
+import { admin, organization } from "better-auth/plugins"
 
 import { db } from "./db";
 import { ac, roles } from "./permissions";
@@ -20,6 +20,13 @@ export const auth = betterAuth({
       roles,
       adminRoles: ["teacher", "staff", "dev"],
       defaultRole: "student"
+    }),
+    organization({
+      teams: {
+          enabled: true,
+          maximumTeams: 10, // Optional: limit teams per organization
+          allowRemovingAllTeams: false // Optional: prevent removing the last team
+      }
     }),
     reactStartCookies()
   ],

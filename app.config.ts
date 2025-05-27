@@ -1,6 +1,7 @@
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "@tanstack/react-start/config";
 import tsConfigPaths from "vite-tsconfig-paths";
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig({
   vite: {
@@ -9,9 +10,19 @@ export default defineConfig({
         projects: ["./tsconfig.json"],
       }),
       tailwindcss(),
+      nodePolyfills({
+        include: ['buffer'],
+        globals: {
+          Buffer: true,
+          global: true,
+          process: true,
+        },
+        ssr: true,
+      }),
     ],
-    
-
+    ssr: {
+      noExternal: ['stream-browserify'],
+    },
     resolve: {
       alias: {
         // /esm/icons/index.mjs only exports the icons statically, so no separate chunks are created

@@ -1,0 +1,102 @@
+table account {
+  id text [pk, not null]
+  account_id text [not null]
+  provider_id text [not null]
+  user_id text [not null]
+  access_token text
+  refresh_token text
+  id_token text
+  access_token_expires_at timestamp
+  refresh_token_expires_at timestamp
+  scope text
+  password text
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+}
+
+table invitation {
+  id text [pk, not null]
+  organization_id text [not null]
+  email text [not null]
+  role text
+  team_id text
+  status text [not null, default: 'pending']
+  expires_at timestamp [not null]
+  inviter_id text [not null]
+}
+
+table member {
+  id text [pk, not null]
+  organization_id text [not null]
+  user_id text [not null]
+  role text [not null, default: 'member']
+  team_id text
+  created_at timestamp [not null]
+}
+
+table organization {
+  id text [pk, not null]
+  name text [not null]
+  slug text [unique]
+  logo text
+  created_at timestamp [not null]
+  metadata text
+}
+
+table session {
+  id text [pk, not null]
+  expires_at timestamp [not null]
+  token text [not null, unique]
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+  ip_address text
+  user_agent text
+  user_id text [not null]
+  impersonated_by text
+  active_organization_id text
+}
+
+table team {
+  id text [pk, not null]
+  name text [not null]
+  organization_id text [not null]
+  created_at timestamp [not null]
+  updated_at timestamp
+}
+
+table user {
+  id text [pk, not null]
+  name text [not null]
+  email text [not null, unique]
+  email_verified boolean [not null]
+  image text
+  created_at timestamp [not null]
+  updated_at timestamp [not null]
+  role text
+  banned boolean
+  ban_reason text
+  ban_expires timestamp
+}
+
+table verification {
+  id text [pk, not null]
+  identifier text [not null]
+  value text [not null]
+  expires_at timestamp [not null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+ref account_user_id_user_id_fk: account.user_id > user.id [delete: cascade, update: no action]
+
+ref invitation_organization_id_organization_id_fk: invitation.organization_id > organization.id [delete: cascade, update: no action]
+
+ref invitation_inviter_id_user_id_fk: invitation.inviter_id > user.id [delete: cascade, update: no action]
+
+ref member_organization_id_organization_id_fk: member.organization_id > organization.id [delete: cascade, update: no action]
+
+ref member_user_id_user_id_fk: member.user_id > user.id [delete: cascade, update: no action]
+
+ref session_user_id_user_id_fk: session.user_id > user.id [delete: cascade, update: no action]
+
+ref team_organization_id_organization_id_fk: team.organization_id > organization.id [delete: cascade, update: no action]
