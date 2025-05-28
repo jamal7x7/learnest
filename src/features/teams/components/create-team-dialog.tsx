@@ -22,7 +22,8 @@ import { Alert, AlertDescription } from '~/components/ui/alert'
 import { Copy, Check } from 'lucide-react'
 import { useTeams } from '../context/teams-context'
 import { TeamType } from '../data/schema'
-import { createTeam } from '../api/teams.api'
+import { toast } from 'sonner'
+import authClient from '~/lib/auth-client'
 
 interface CreateTeamDialogProps {
   open: boolean
@@ -40,27 +41,46 @@ export function CreateTeamDialog({ open }: CreateTeamDialogProps) {
   const [createdTeam, setCreatedTeam] = useState<{ name: string; inviteCode: string } | null>(null)
   const [copied, setCopied] = useState(false)
 
+  // Get the current session using the configured auth client
+  const { data: session, isLoading: isLoadingSession } = authClient.useSession()
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!session) {
+      toast.error('You must be logged in to create a team')
+      return
+    }
+    
     setIsLoading(true)
     
     try {
-      // TODO: Get actual user ID from auth context
-      const userId = 'temp-user-id' // This should come from auth
+      const response = await fetch('/api/teams', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          description: formData.description || undefined,
+          type: formData.type as TeamType,
+          maxMembers: formData.maxMembers ? parseInt(formData.maxMembers) : undefined,
+          createdBy: session.user.id,
+          organizationId: session.user.id,
+        }),
+      });
       
-      const team = await createTeam({
-        name: formData.name,
-        description: formData.description || undefined,
-        type: formData.type as TeamType,
-        maxMembers: formData.maxMembers ? parseInt(formData.maxMembers) : undefined,
-        createdBy: userId,
-        organizationId: "temp-org-id", // TODO: Get actual organization ID
-      })
+      const result = await response.json();
       
-      setCreatedTeam({ name: team.name, inviteCode: team.inviteCode })
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to create team');
+      }
+      
+      setCreatedTeam({ name: result.name, inviteCode: result.inviteCode })
+      toast.success('Team created successfully!')
     } catch (error) {
       console.error('Error creating team:', error)
-      // TODO: Show error toast
+      toast.error(error instanceof Error ? error.message : 'Failed to create team')
     } finally {
       setIsLoading(false)
     }

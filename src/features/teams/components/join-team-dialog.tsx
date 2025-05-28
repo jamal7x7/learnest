@@ -12,6 +12,9 @@ import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Alert, AlertDescription } from '~/components/ui/alert'
 import { joinTeamByInviteCode } from '../api/teams.api'
+import { toast } from 'sonner'
+import authClient from '~/lib/auth-client'
+import { useQuery } from '@tanstack/react-query'
 
 interface JoinTeamDialogProps {
   open: boolean
@@ -24,24 +27,43 @@ export function JoinTeamDialog({ open, onOpenChange }: JoinTeamDialogProps) {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState<{ teamName: string } | null>(null)
 
+  // Get the current session
+  const { data: session, isLoading: isLoadingSession } = useQuery({
+    queryKey: ['session'],
+    queryFn: async () => {
+      try {
+        const session = await authClient.api.getSession()
+        return session?.user || null
+      } catch (error) {
+        return null
+      }
+    },
+  })
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!session) {
+      toast.error('You must be logged in to join a team')
+      return
+    }
+    
     setIsLoading(true)
     setError('')
     
     try {
-      // TODO: Get actual user ID from auth context
-      const userId = 'temp-user-id' // This should come from auth
-      
       const team = await joinTeamByInviteCode({
         inviteCode: inviteCode.trim().toUpperCase(),
-        userId,
+        userId: session.id,
       })
       
       setSuccess({ teamName: team.name })
       setInviteCode('')
+      toast.success(`Successfully joined ${team.name}!`)
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to join team')
+      const errorMessage = error instanceof Error ? error.message : 'Failed to join team'
+      setError(errorMessage)
+      toast.error(errorMessage)
     } finally {
       setIsLoading(false)
     }

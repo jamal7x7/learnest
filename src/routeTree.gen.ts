@@ -38,6 +38,8 @@ import { Route as AuthenticatedDashboardIndexImport } from './routes/_authentica
 import { Route as AuthenticatedChatsIndexImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedAppsIndexImport } from './routes/_authenticated/apps/index'
 import { Route as AuthenticatedAnnouncementsIndexImport } from './routes/_authenticated/announcements/index'
+import { Route as AuthenticatedTeamsJoinImport } from './routes/_authenticated/teams/join'
+import { Route as AuthenticatedTeamsCreateCodeImport } from './routes/_authenticated/teams/create-code'
 import { Route as AuthenticatedSettingsNotificationsImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsDisplayImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceImport } from './routes/_authenticated/settings/appearance'
@@ -214,6 +216,19 @@ const AuthenticatedAnnouncementsIndexRoute =
   AuthenticatedAnnouncementsIndexImport.update({
     id: '/announcements/',
     path: '/announcements/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+
+const AuthenticatedTeamsJoinRoute = AuthenticatedTeamsJoinImport.update({
+  id: '/teams/join',
+  path: '/teams/join',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+
+const AuthenticatedTeamsCreateCodeRoute =
+  AuthenticatedTeamsCreateCodeImport.update({
+    id: '/teams/create-code',
+    path: '/teams/create-code',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
@@ -445,6 +460,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsNotificationsImport
       parentRoute: typeof AuthenticatedSettingsRouteImport
     }
+    '/_authenticated/teams/create-code': {
+      id: '/_authenticated/teams/create-code'
+      path: '/teams/create-code'
+      fullPath: '/teams/create-code'
+      preLoaderRoute: typeof AuthenticatedTeamsCreateCodeImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
+    '/_authenticated/teams/join': {
+      id: '/_authenticated/teams/join'
+      path: '/teams/join'
+      fullPath: '/teams/join'
+      preLoaderRoute: typeof AuthenticatedTeamsJoinImport
+      parentRoute: typeof AuthenticatedRouteImport
+    }
     '/_authenticated/announcements/': {
       id: '/_authenticated/announcements/'
       path: '/announcements'
@@ -594,6 +623,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDashboardOldRouteRoute: typeof AuthenticatedDashboardOldRouteRouteWithChildren
   AuthenticatedAnnouncementsAnnouncementIdRoute: typeof AuthenticatedAnnouncementsAnnouncementIdRoute
   AuthenticatedCurrentUserCurrentUserIdRoute: typeof AuthenticatedCurrentUserCurrentUserIdRoute
+  AuthenticatedTeamsCreateCodeRoute: typeof AuthenticatedTeamsCreateCodeRoute
+  AuthenticatedTeamsJoinRoute: typeof AuthenticatedTeamsJoinRoute
   AuthenticatedAnnouncementsIndexRoute: typeof AuthenticatedAnnouncementsIndexRoute
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
@@ -614,6 +645,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedAnnouncementsAnnouncementIdRoute,
   AuthenticatedCurrentUserCurrentUserIdRoute:
     AuthenticatedCurrentUserCurrentUserIdRoute,
+  AuthenticatedTeamsCreateCodeRoute: AuthenticatedTeamsCreateCodeRoute,
+  AuthenticatedTeamsJoinRoute: AuthenticatedTeamsJoinRoute,
   AuthenticatedAnnouncementsIndexRoute: AuthenticatedAnnouncementsIndexRoute,
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
@@ -652,6 +685,8 @@ export interface FileRoutesByFullPath {
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/teams/create-code': typeof AuthenticatedTeamsCreateCodeRoute
+  '/teams/join': typeof AuthenticatedTeamsJoinRoute
   '/announcements': typeof AuthenticatedAnnouncementsIndexRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
@@ -686,6 +721,8 @@ export interface FileRoutesByTo {
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/teams/create-code': typeof AuthenticatedTeamsCreateCodeRoute
+  '/teams/join': typeof AuthenticatedTeamsJoinRoute
   '/announcements': typeof AuthenticatedAnnouncementsIndexRoute
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
@@ -725,6 +762,8 @@ export interface FileRoutesById {
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/_authenticated/teams/create-code': typeof AuthenticatedTeamsCreateCodeRoute
+  '/_authenticated/teams/join': typeof AuthenticatedTeamsJoinRoute
   '/_authenticated/announcements/': typeof AuthenticatedAnnouncementsIndexRoute
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
@@ -764,6 +803,8 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/teams/create-code'
+    | '/teams/join'
     | '/announcements'
     | '/apps'
     | '/chats'
@@ -797,6 +838,8 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/teams/create-code'
+    | '/teams/join'
     | '/announcements'
     | '/apps'
     | '/chats'
@@ -834,6 +877,8 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
     | '/_authenticated/settings/notifications'
+    | '/_authenticated/teams/create-code'
+    | '/_authenticated/teams/join'
     | '/_authenticated/announcements/'
     | '/_authenticated/apps/'
     | '/_authenticated/chats/'
@@ -910,6 +955,8 @@ export const routeTree = rootRoute
         "/_authenticated/dashboard/old",
         "/_authenticated/announcements/$announcementId",
         "/_authenticated/current-user/$currentUserId",
+        "/_authenticated/teams/create-code",
+        "/_authenticated/teams/join",
         "/_authenticated/announcements/",
         "/_authenticated/apps/",
         "/_authenticated/chats/",
@@ -1012,6 +1059,14 @@ export const routeTree = rootRoute
     "/_authenticated/settings/notifications": {
       "filePath": "_authenticated/settings/notifications.tsx",
       "parent": "/_authenticated/settings"
+    },
+    "/_authenticated/teams/create-code": {
+      "filePath": "_authenticated/teams/create-code.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/teams/join": {
+      "filePath": "_authenticated/teams/join.tsx",
+      "parent": "/_authenticated"
     },
     "/_authenticated/announcements/": {
       "filePath": "_authenticated/announcements/index.tsx",

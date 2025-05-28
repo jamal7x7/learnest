@@ -47,7 +47,7 @@ export default function Teams() {
   )
 }
 
-const topNav = [
+export const topNav = [
   {
     title: 'Teams Management',
     href: '/teams',

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -90,6 +91,10 @@ const columns: ColumnDef<Team>[] = [
         await navigator.clipboard.writeText(inviteCode)
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
+        toast.success('Invite code copied to clipboard', {
+          description: 'You can now share it with others',
+          position: 'bottom-right',
+        })
       }
       
       return (

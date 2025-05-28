@@ -12,6 +12,7 @@ import { ThemeProvider } from "~/context/theme-context";
 import { FontProvider } from "~/context/font-context";
 import { SidebarVisibilityProvider } from "~/context/sidebar-visibility-context";
 import { InjectThemeScript } from "~/lib/inject-theme-script";
+import { Toaster } from "~/components/ui/sonner";
 
 // import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 // import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
@@ -84,6 +85,7 @@ function RootDocument({ children }: { readonly children: React.ReactNode }) {
       <body>
 
         {children}
+        <Toaster />
 
         {/* <ReactQueryDevtools  buttonPosition="bottom-left" /> */}
         {/* <TanStackRouterDevtools position="bottom-right" /> */}
