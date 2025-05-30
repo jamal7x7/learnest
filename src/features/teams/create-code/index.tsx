@@ -200,7 +200,7 @@ function CreateCode() {
       // const newCode = response.code
       
       // Mock response for now
-      const mockCode = `TEAM-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+      const mockCode = `${Math.random().toString(36).substring(2, 8).toUpperCase()}`
       setInviteCode(mockCode)
       toast.success('Invite code generated successfully')
     } catch (error) {

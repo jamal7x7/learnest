@@ -15,12 +15,13 @@ export const Route = createFileRoute('/_authenticated')({
 
 function RouteComponent() {
   const data = Route.useLoaderData()
+
   const defaultOpen = Cookies.get('sidebar_state') !== 'false'
   return (
     <SearchProvider>
       <SidebarProvider defaultOpen={defaultOpen}>
         <SkipToMain />
-        <AppSidebar userData={{name:data.user?.name, email:data.user?.email, avatar:data.user?.image}} />
+        <AppSidebar userData={data.user} />
         <div
           id='content'
           className={cn(

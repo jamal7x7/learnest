@@ -14,7 +14,8 @@ import {
   IconUsersGroup,
   IconCalendar,
   IconLock,
-  IconWorld
+  IconWorld,
+  IconX
 } from '@tabler/icons-react'
 import dynamic from 'next/dynamic'
 
@@ -323,55 +324,84 @@ export default function JoinTeam() {
                           <FormItem>
                             <FormLabel className="text-sm font-medium">Invite Code</FormLabel>
                             <FormControl>
-                              <div className="relative group">
-                                <Input
-                                  placeholder="e.g. ABC123"
-                                  className="text-center font-mono text-lg tracking-widest h-12 bg-muted/30 pr-10"
-                                  maxLength={6}
-                                  autoComplete="off"
-                                  {...field}
-                                  onChange={(e) => {
-                                    // Convert to uppercase and remove non-alphanumeric
-                                    const value = e.target.value
-                                      .toUpperCase()
-                                      .replace(/[^A-Z0-9]/g, '')
-                                    field.onChange(value)
-                                  }}
-                                />
-                                {field.value && field.value.length === 6 && (
-                                  <button
-                                    type="button"
-                                    onClick={handleCopyCode}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                                    title="Copy code"
-                                  >
-                                    {copied ? (
-                                      <IconCheck className="h-4 w-4 text-green-500" />
-                                    ) : (
-                                      <IconCopy className="h-4 w-4" />
-                                    )}
-                                  </button>
-                                )}
-                              </div>
+<div className="relative group">
+  <Input
+    placeholder="e.g. ABC123"
+    className="text-center font-mono text-lg tracking-widest h-12 bg-muted/30 pr-20"
+    maxLength={6}
+    autoComplete="off"
+    {...field}
+    onChange={(e) => {
+      // Convert to uppercase and remove non-alphanumeric
+      const value = e.target.value
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g, '')
+      field.onChange(value)
+    }}
+  />
+  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex space-x-1">
+    {field.value && field.value.length > 0 && (
+      <button
+        type="button"
+        onClick={() => field.onChange('')}
+        className="text-muted-foreground hover:text-foreground transition-colors"
+        title="Clear"
+      >
+        <IconX className="h-4 w-4" />
+      </button>
+    )}
+    {field.value && field.value.length === 6 && (
+      <button
+        type="button"
+        onClick={handleCopyCode}
+        className="text-muted-foreground hover:text-foreground transition-colors"
+        title={copied ? "Copied!" : "Copy code"}
+      >
+        {copied ? (
+          <IconCheck className="h-4 w-4 text-green-500" />
+        ) : (
+          <IconCopy className="h-4 w-4" />
+        )}
+      </button>
+    )}
+  </div>
+</div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
 
-                      <AnimatePresence>
-                        {isLoadingPreview && watchInviteCode?.length === 6 && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="overflow-hidden"
-                          >
-                            <div className="flex items-center justify-center py-6">
-                              <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
-                            </div>
-                          </motion.div>
-                        )}
+<AnimatePresence>
+  {isLoadingPreview && watchInviteCode?.length === 6 && (
+    <motion.div
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0 }}
+      className="overflow-hidden"
+    >
+      <Card className="border border-border/50 bg-muted/20 animate-pulse">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="h-12 w-12 bg-gray-200 rounded-full"></div>
+              <div className="space-y-2">
+                <div className="h-4 w-32 bg-gray-200 rounded"></div>
+                <div className="flex space-x-2">
+                  <div className="h-4 w-16 bg-gray-200 rounded"></div>
+                  <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="h-3 w-full bg-gray-200 rounded"></div>
+          <div className="h-3 w-2/3 bg-gray-200 rounded"></div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  )}
 
                         {teamPreview && !isLoadingPreview && watchInviteCode?.length === 6 && (
                           <motion.div
@@ -379,62 +409,55 @@ export default function JoinTeam() {
                             animate={{ opacity: 1, y: 0 }}
                             className="space-y-4 pt-2"
                           >
-                            <Card className="border border-border/50 bg-muted/20">
-                              <CardHeader className="pb-3">
-                                <div className="flex items-start justify-between">
-                                  <div className="flex items-center space-x-3">
-                                    <Avatar className="h-10 w-10">
-                                      <AvatarFallback className="bg-primary/10 text-primary">
-                                        {teamPreview.name.charAt(0)}
-                                      </AvatarFallback>
-                                    </Avatar>
-                                    <div>
-                                      <h3 className="font-medium">{teamPreview.name}</h3>
-                                      <div className="flex items-center mt-1">
-                                        <Badge 
-                                          variant={teamPreview.isPublic ? 'default' : 'secondary'}
-                                          className="text-xs"
-                                        >
-                                          {teamPreview.isPublic ? (
-                                            <>
-                                              <IconWorld className="h-3 w-3 mr-1" />
-                                              Public
-                                            </>
-                                          ) : (
-                                            <>
-                                              <IconLock className="h-3 w-3 mr-1" />
-                                              Private
-                                            </>
-                                          )}
-                                        </Badge>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </CardHeader>
-                              <CardContent className="space-y-3 text-sm">
-                                <div className="flex items-center space-x-2">
-                                  <IconUsersGroup className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                                  <span>
-                                    {teamPreview.memberCount} {teamPreview.memberCount === 1 ? 'member' : 'members'}
-                                  </span>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <IconCalendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                                  <span>
-                                    Created {new Date(teamPreview.createdAt).toLocaleDateString()}
-                                  </span>
-                                </div>
-                                {teamPreview.description && (
-                                  <div className="flex items-start space-x-2 pt-1">
-                                    <IconInfoCircle className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                                    <p className="text-muted-foreground">
-                                      {teamPreview.description}
-                                    </p>
-                                  </div>
-                                )}
-                              </CardContent>
-                            </Card>
+<Card className="border border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10 shadow-sm">
+  <CardHeader className="pb-3">
+    <div className="flex items-start justify-between">
+      <div className="flex items-center space-x-4">
+        <Avatar className="h-12 w-12">
+          <AvatarFallback className="bg-primary/10 text-primary text-lg">
+            {teamPreview.name.charAt(0)}
+          </AvatarFallback>
+        </Avatar>
+        <div>
+          <h3 className="font-bold text-lg">{teamPreview.name}</h3>
+          <div className="flex items-center mt-1 space-x-2">
+            <Badge 
+              variant={teamPreview.isPublic ? 'default' : 'secondary'}
+              className="text-xs"
+            >
+              {teamPreview.isPublic ? (
+                <>
+                  <IconWorld className="h-3 w-3 mr-1" />
+                  Public
+                </>
+              ) : (
+                <>
+                  <IconLock className="h-3 w-3 mr-1" />
+                  Private
+                </>
+              )}
+            </Badge>
+            <div className="flex items-center text-xs text-muted-foreground">
+              <IconUsersGroup className="h-3 w-3 mr-1" />
+              <span>{teamPreview.memberCount} members</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </CardHeader>
+  <CardContent className="space-y-3 pt-0">
+    {teamPreview.description && (
+      <p className="text-sm text-muted-foreground">
+        {teamPreview.description}
+      </p>
+    )}
+    <div className="flex items-center text-xs text-muted-foreground">
+      <IconCalendar className="h-3 w-3 mr-1 flex-shrink-0" />
+      <span>Created {new Date(teamPreview.createdAt).toLocaleDateString()}</span>
+    </div>
+  </CardContent>
+</Card>
                           </motion.div>
                         )}
                       </AnimatePresence>

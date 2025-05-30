@@ -37,6 +37,8 @@ import {
 import { Check, Copy, MoreHorizontal } from 'lucide-react'
 import { Team } from '../data/schema'
 import { useTeams } from '../context/teams-context'
+import { Skeleton } from '~/components/ui/skeleton';
+import { IconUsers } from '@tabler/icons-react';
 
 const columns: ColumnDef<Team>[] = [
   {
@@ -166,9 +168,10 @@ const columns: ColumnDef<Team>[] = [
 interface DataTableProps {
   columns: ColumnDef<Team>[]
   data: Team[]
+  isLoading?: boolean // Add isLoading prop
 }
 
-export function TeamsTable({ columns, data }: DataTableProps) {
+export function TeamsTable({ columns, data, isLoading }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -224,7 +227,17 @@ export function TeamsTable({ columns, data }: DataTableProps) {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              Array.from({ length: 5 }).map((_, index) => (
+                <TableRow key={`skeleton-${index}`} className='group/row'>
+                  {columns.map((column) => (
+                    <TableCell key={column.accessorKey || column.id} className={column.meta?.className ?? ''}>
+                      <Skeleton className="h-4 w-full" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -250,7 +263,13 @@ export function TeamsTable({ columns, data }: DataTableProps) {
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  No results.
+                  <div className="flex flex-col items-center justify-center space-y-2">
+                    <IconUsers size={48} className="text-muted-foreground" />
+                    <p className="text-muted-foreground">No teams found.</p>
+                    <p className="text-sm text-muted-foreground">
+                      Get started by creating a new team or joining an existing one.
+                    </p>
+                  </div>
                 </TableCell>
               </TableRow>
             )}

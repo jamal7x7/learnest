@@ -11,10 +11,19 @@ import { TeamsTable } from './components/teams-table'
 import TeamsProvider from './context/teams-context'
 import { teamListSchema } from './data/schema'
 import { teams } from './data/teams'
+import { useState, useEffect } from 'react';
 
 export default function Teams() {
   // Parse team list
   const teamList = teamListSchema.parse(teams)
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // Simulate a 2-second loading time
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <TeamsProvider>
@@ -38,7 +47,7 @@ export default function Teams() {
           <TeamsPrimaryButtons />
         </div>
         <div className='-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12'>
-          <TeamsTable data={teamList} columns={columns} />
+          <TeamsTable data={isLoading ? [] : teamList} columns={columns} isLoading={isLoading} />
         </div>
       </Main>
 
