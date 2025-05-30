@@ -73,6 +73,14 @@ import { Badge } from '~/components/ui/badge'
 // import { generateInviteCode } from '../api/teams.api'
 import { topNav } from '../index'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '~/components/ui/dialog'
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '~/components/ui/drawer'
+import { useIsMobile } from '~/hooks/use-mobile'
 import { 
   Table,
   TableBody,
@@ -155,7 +163,9 @@ function CreateCode() {
   const [expiration, setExpiration] = useState<string>('24h')
   const [isGenerating, setIsGenerating] = useState(false)
   const [isCopied, setIsCopied] = useState(false)
-  const [activeTab, setActiveTab] = useState('code')
+  const [activeTab, setActiveTab] = useState('active')
+  const isMobile = useIsMobile()
+  const isDesktop = !isMobile
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [inviteHistory, setInviteHistory] = useState<InviteHistory[]>(mockInviteHistory)
 
@@ -231,23 +241,20 @@ function CreateCode() {
                   Generate a new invitation code for team members
                 </p>
               </div>
-              <Dialog >
-                <DialogTrigger asChild >
-                  <Button className="group relative overflow-hidden">
-                    <span className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                    <span className="relative z-10 flex items-center">
-                      <IconPlus className="mr-2 h-4 w-4" />
-                      New Invite
-                    </span>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-2xl rounded-3xl p-3">
-                  {/* <DialogHeader>
-                    <DialogTitle>Create New Team Invite</DialogTitle>
-                  </DialogHeader> */}
-                  <div className="py-0">
+              {isDesktop ? (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="group relative overflow-hidden">
+                      <span className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                      <span className="relative z-10 flex items-center">
+                        <IconPlus className="mr-2 h-4 w-4" />
+                        New Invite
+                      </span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-2xl rounded-3xl p-2">
                     <div className="space-y-6">
-                      <Card className="w-full border-2 shadow-lg overflow-y-scroll pb-0 pt-0">
+                      <Card className="w-full border-0 bg-transparent shadow-sm overflow-auto pb-0 pt-0">
                         <CardHeader className="text-center pb-2 pt-8">
                           <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
                             Create Team Invite
@@ -437,9 +444,209 @@ function CreateCode() {
                         )}
                       </Card>
                     </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
+                  </DialogContent>
+                </Dialog>
+              ) : (
+                <Drawer>
+                  <DrawerTrigger asChild>
+                    <Button className="group relative overflow-hidden w-full md:w-auto">
+                      <span className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                      <span className="relative z-10 flex items-center">
+                        <IconPlus className="mr-2 h-4 w-4" />
+                        New Invite
+                      </span>
+                    </Button>
+                  </DrawerTrigger>
+                  <DrawerContent className="rounded-t-2xl p-2">
+                    <div className="space-y-6">
+                      <Card className="w-full border-0 bg-transparent shadow-sm overflow-auto pb-0 pt-0">
+                        {!inviteCode ? (
+                          <>
+                            <CardHeader className="text-center pb-2 pt-4">
+                              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                                Create Team Invite
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-6 pt-0">
+                              {/* Team Selection */}
+                              <div className="space-y-4">
+                                <div className="space-y-2">
+                                  <label className="text-sm font-medium leading-none">Select Team</label>
+                                  <Select onValueChange={setSelectedTeam} value={selectedTeam}>
+                                    <SelectTrigger className="w-full">
+                                      <SelectValue placeholder="Select a team" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {mockTeams.map((team) => (
+                                        <SelectItem key={team.id} value={team.id}>
+                                          <div className="flex items-center gap-2">
+                                            <IconUsers className="h-4 w-4 text-muted-foreground" />
+                                            <span>{team.name}</span>
+                                            <Badge variant="outline" className="ml-auto">
+                                              {team.type}
+                                            </Badge>
+                                          </div>
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+
+                                {/* Expiration */}
+                                <div className="space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <label className="text-sm font-medium leading-none">Expiration</label>
+                                    <TooltipProvider>
+                                      <Tooltip>
+                                        <TooltipTrigger type="button">
+                                          <IconInfoCircle className="h-4 w-4 text-muted-foreground" />
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top" className="max-w-[200px]">
+                                          <p>How long the invite will remain valid</p>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  </div>
+                                  <Select onValueChange={setExpiration} value={expiration}>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select expiration" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {EXPIRATION_OPTIONS.map((option) => (
+                                        <SelectItem key={option.value} value={option.value}>
+                                          {option.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+
+                                <Button
+                                  onClick={handleGenerateCode}
+                                  size="lg"
+                                  className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary transition-all duration-200 font-medium mt-2"
+                                  disabled={isGenerating || !selectedTeam}
+                                >
+                                  {isGenerating ? (
+                                    <>
+                                      <span className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"></span>
+                                      Generating...
+                                    </>
+                                  ) : (
+                                    <>
+                                      <IconRefresh className="mr-2 h-4 w-4" />
+                                      Generate Invite Code
+                                    </>
+                                  )}
+                                </Button>
+                              </div>
+                            </CardContent>
+                          </>
+                        ) : (
+                          <>
+                            <CardHeader className="text-center pb-2 pt-4">
+                              <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                                Invite Created!
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-6 pt-0">
+                              <Tabs defaultValue="code" className="w-full">
+                                <TabsList className="grid w-full grid-cols-2">
+                                  <TabsTrigger value="code">Invite Code</TabsTrigger>
+                                  <TabsTrigger value="qrcode">QR Code</TabsTrigger>
+                                </TabsList>
+                                
+                                <TabsContent value="code" className="mt-6">
+                                  <div className="space-y-4">
+                                    <div className="flex items-center gap-2">
+                                      <div className="flex-1 bg-muted/30 rounded-lg p-3 font-mono text-sm overflow-x-auto">
+                                        {inviteCode}
+                                      </div>
+                                      <Button
+                                        variant="outline"
+                                        size="icon"
+                                        onClick={handleCopyCode}
+                                        className="shrink-0"
+                                      >
+                                        {isCopied ? (
+                                          <IconCheck className="h-4 w-4" />
+                                        ) : (
+                                          <IconCopy className="h-4 w-4" />
+                                        )}
+                                      </Button>
+                                    </div>
+                                    <div className="text-sm text-muted-foreground text-center">
+                                      Share this code with others to let them join
+                                    </div>
+                                  </div>
+                                </TabsContent>
+                                
+                                <TabsContent value="qrcode" className="mt-6 flex flex-col items-center">
+                                  <div className="p-4 bg-white rounded-lg border border-border">
+                                    <QRCode 
+                                      value={`${window.location.origin}/teams/join?code=${inviteCode}`}
+                                      size={200}
+                                      level="H"
+                                      includeMargin={false}
+                                    />
+                                  </div>
+                                  <p className="mt-4 text-sm text-muted-foreground text-center">
+                                    Scan this QR code to join {selectedTeamData?.name}
+                                  </p>
+                                </TabsContent>
+                              </Tabs>
+                              
+                              <div className="mt-6 p-4 bg-muted/30 rounded-lg border border-border">
+                                <h4 className="font-medium mb-2 flex items-center gap-2">
+                                  <IconInfoCircle className="h-4 w-4 text-primary" />
+                                  Invite Details
+                                </h4>
+                                <div className="space-y-2 text-sm">
+                                  <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Team:</span>
+                                    <span className="font-medium">{selectedTeamData?.name}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Expires:</span>
+                                    <span className="font-medium">
+                                      {expiration === 'never' 
+                                        ? 'Never' 
+                                        : (() => {
+                                            try {
+                                              const hours = parseInt(expiration, 10);
+                                              if (isNaN(hours)) return 'Invalid date';
+                                              const expirationDate = new Date();
+                                              expirationDate.setHours(expirationDate.getHours() + hours);
+                                              return formatDistanceToNow(expirationDate) + ' from now';
+                                            } catch (e) {
+                                              console.error('Error calculating expiration:', e);
+                                              return 'Error calculating expiration';
+                                            }
+                                          })()}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <Button 
+                                variant="outline" 
+                                className="w-full mt-4"
+                                onClick={() => {
+                                  setInviteCode('')
+                                  setSelectedTeam('')
+                                  setExpiration('24h')
+                                }}
+                              >
+                                Create Another Invite
+                              </Button>
+                            </CardContent>
+                          </>
+                        )}
+                      </Card>
+                    </div>
+                  </DrawerContent>
+                </Drawer>
+              )}
             </div>
           </div>
         </div>
