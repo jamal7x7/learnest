@@ -97,14 +97,14 @@ async function getTeamPreview(inviteCode: string): Promise<TeamPreview> {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
-        id: 'team-' + Math.random().toString(36).substr(2, 9),
-        name: 'Team ' + inviteCode.substr(0, 3).toUpperCase(),
+        id: Math.random().toString(36).substr(2, 9),
+        name: "Team " + inviteCode.substr(0, 3).toUpperCase(),
         memberCount: Math.floor(Math.random() * 50) + 1,
-        description: 'A collaborative team working on exciting projects',
-        createdBy: 'team@example.com',
+        description: "A collaborative team working on exciting projects",
+        createdBy: "team@example.com",
         createdAt: new Date().toISOString(),
-        isPublic: Math.random() > 0.5
-      })
+        isPublic: Math.random() > 0.5,
+      });
     }, 500)
   })
 }
