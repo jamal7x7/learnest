@@ -11,7 +11,7 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Alert, AlertDescription } from '~/components/ui/alert'
-import { joinTeamByInviteCode } from '../api/teams.api'
+import { joinTeamByInviteCode } from '../api/joinTeam.server'
 import { toast } from 'sonner'
 import authClient from '~/lib/auth-client'
 import { useQuery } from '@tanstack/react-query'
@@ -39,24 +39,26 @@ export function JoinTeamDialog({ open, onOpenChange }: JoinTeamDialogProps) {
       }
     },
   })
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!session) {
       toast.error('You must be logged in to join a team')
       return
     }
-    
+
     setIsLoading(true)
     setError('')
-    
+
     try {
       const team = await joinTeamByInviteCode({
-        inviteCode: inviteCode.trim().toUpperCase(),
-        userId: session.id,
+        data: {
+          inviteCode: inviteCode.trim().toUpperCase(),
+          userId: session.id,
+        }
       })
-      
+
       setSuccess({ teamName: team.name })
       setInviteCode('')
       toast.success(`Successfully joined ${team.name}!`)
@@ -124,13 +126,13 @@ export function JoinTeamDialog({ open, onOpenChange }: JoinTeamDialogProps) {
               Code should be 6 characters (letters and numbers)
             </p>
           </div>
-          
+
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-          
+
           <DialogFooter>
             <Button type="button" variant="outline" onClick={handleClose}>
               Cancel

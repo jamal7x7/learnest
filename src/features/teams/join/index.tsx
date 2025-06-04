@@ -5,8 +5,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion, AnimatePresence } from 'motion/react'
 import { toast } from 'sonner'
-import { 
-  IconInfoCircle, 
+import {
+  IconInfoCircle,
   IconQrcode,
   IconCopy,
   IconCheck,
@@ -52,13 +52,13 @@ import { Header } from '~/components/layout/header'
 import { Main } from '~/components/layout/main'
 import { TopNav } from '~/components/layout/top-nav'
 import { Button } from '~/components/ui/button'
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
 } from '~/components/ui/card'
 import { Avatar, AvatarFallback } from '~/components/ui/avatar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
@@ -66,7 +66,7 @@ import { Badge } from '~/components/ui/badge'
 // Tooltip components are imported by the Button component
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
-import { joinTeamByInviteCode } from '../api/teams.api'
+import { joinTeamByInviteCode } from '../api/joinTeam.server'
 import { topNav } from '../index'
 
 // Types
@@ -117,22 +117,22 @@ export default function JoinTeam() {
   const [teamPreview, setTeamPreview] = useState<TeamPreview | null>(null)
   const [activeTab, setActiveTab] = useState('code')
   const [copied, setCopied] = useState(false)
-  
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       inviteCode: ''
     }
   })
-  
+
   // Watch for invite code changes
   const watchInviteCode = form.watch('inviteCode', '')
-  
+
   // Handle copy to clipboard
   const handleCopyCode = useCallback(() => {
     const code = form.getValues('inviteCode')
     if (!code) return
-    
+
     navigator.clipboard.writeText(code)
       .then(() => {
         setCopied(true)
@@ -144,11 +144,11 @@ export default function JoinTeam() {
         toast.error('Failed to copy invite code to clipboard')
       })
   }, [form])
-  
+
   // Effect to handle preview when invite code changes
   useEffect(() => {
     let isMounted = true
-    
+
     const updateState = {
       teamPreview: (preview: TeamPreview | null) => {
         if (isMounted) setTeamPreview(preview)
@@ -160,7 +160,7 @@ export default function JoinTeam() {
         if (isMounted) setIsLoadingPreview(isLoading)
       }
     }
-    
+
     const fetchTeamPreview = async (code: string) => {
       try {
         updateState.loading(true)
@@ -168,7 +168,7 @@ export default function JoinTeam() {
         const preview = await getTeamPreview(code)
         updateState.teamPreview(preview)
       } catch (err) {
-        const errorMessage = err instanceof Error ? 
+        const errorMessage = err instanceof Error ?
           err.message : 'Failed to load team preview'
         updateState.error(errorMessage)
         updateState.teamPreview(null)
@@ -176,12 +176,12 @@ export default function JoinTeam() {
         updateState.loading(false)
       }
     }
-    
+
     if (watchInviteCode?.length === 6) {
       const timer = setTimeout(() => {
         fetchTeamPreview(watchInviteCode)
       }, 500) // Debounce for 500ms
-      
+
       return () => {
         isMounted = false
         clearTimeout(timer)
@@ -190,20 +190,20 @@ export default function JoinTeam() {
       updateState.teamPreview(null)
     }
   }, [watchInviteCode])
-  
+
   // Render QR code section
   const renderQRCode = () => {
     if (activeTab !== 'qr') return null
-    
-    const inviteUrl = typeof window !== 'undefined' 
+
+    const inviteUrl = typeof window !== 'undefined'
       ? `${window.location.origin}/teams/join?code=${form.getValues('inviteCode')}`
       : ''
-    
+
     return (
       <div className="flex flex-col items-center space-y-4">
         <div className="p-4 bg-white rounded-lg border border-gray-200 flex items-center justify-center" style={{ minHeight: '160px' }}>
           {inviteUrl && (
-            <QRCode 
+            <QRCode
               value={inviteUrl}
               size={128}
               level="H"
@@ -217,28 +217,30 @@ export default function JoinTeam() {
       </div>
     )
   }
-  
+
   // Form submission handler
   const onSubmit = async (values: FormValues) => {
     try {
       setError('')
       setIsSubmitting(true)
-      
+
       // In a real app, you'd use the actual user ID from auth context
-      const dummyUserId = 'user123' 
-      
+      const dummyUserId = 'user123'
+
       // Simulate API call delay
       setTimeout(async () => {
         try {
           await joinTeamByInviteCode({
-            inviteCode: values.inviteCode,
-            userId: dummyUserId
+            data: {
+              inviteCode: values.inviteCode,
+              userId: dummyUserId
+            }
           })
-          
+
           toast.success('Successfully joined team', {
             description: 'You have been added to the team',
           })
-          
+
           // Navigate after a short delay to allow the toast to be seen
           setTimeout(() => {
             navigate({ to: '/teams' })
@@ -288,9 +290,9 @@ export default function JoinTeam() {
               Enter an invite code to join an existing team
             </p>
           </div>
-          
-          <Tabs 
-            value={activeTab} 
+
+          <Tabs
+            value={activeTab}
             onValueChange={setActiveTab}
             className="w-full"
             defaultValue="code"
@@ -305,7 +307,7 @@ export default function JoinTeam() {
                 Scan QR
               </TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="code" className="mt-6">
               <Card className="border-2 shadow-lg overflow-hidden">
                 <CardHeader className="pb-4">
@@ -324,84 +326,84 @@ export default function JoinTeam() {
                           <FormItem>
                             <FormLabel className="text-sm font-medium">Invite Code</FormLabel>
                             <FormControl>
-<div className="relative group">
-  <Input
-    placeholder="e.g. ABC123"
-    className="text-center font-mono text-lg tracking-widest h-12 bg-muted/30 pr-20"
-    maxLength={6}
-    autoComplete="off"
-    {...field}
-    onChange={(e) => {
-      // Convert to uppercase and remove non-alphanumeric
-      const value = e.target.value
-        .toUpperCase()
-        .replace(/[^A-Z0-9]/g, '')
-      field.onChange(value)
-    }}
-  />
-  <div className="absolute right-2 top-1/2 -translate-y-1/2 flex space-x-1">
-    {field.value && field.value.length > 0 && (
-      <button
-        type="button"
-        onClick={() => field.onChange('')}
-        className="text-muted-foreground hover:text-foreground transition-colors"
-        title="Clear"
-      >
-        <IconX className="h-4 w-4" />
-      </button>
-    )}
-    {field.value && field.value.length === 6 && (
-      <button
-        type="button"
-        onClick={handleCopyCode}
-        className="text-muted-foreground hover:text-foreground transition-colors"
-        title={copied ? "Copied!" : "Copy code"}
-      >
-        {copied ? (
-          <IconCheck className="h-4 w-4 text-green-500" />
-        ) : (
-          <IconCopy className="h-4 w-4" />
-        )}
-      </button>
-    )}
-  </div>
-</div>
+                              <div className="relative group">
+                                <Input
+                                  placeholder="e.g. ABC123"
+                                  className="text-center font-mono text-lg tracking-widest h-12 bg-muted/30 pr-20"
+                                  maxLength={6}
+                                  autoComplete="off"
+                                  {...field}
+                                  onChange={(e) => {
+                                    // Convert to uppercase and remove non-alphanumeric
+                                    const value = e.target.value
+                                      .toUpperCase()
+                                      .replace(/[^A-Z0-9]/g, '')
+                                    field.onChange(value)
+                                  }}
+                                />
+                                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex space-x-1">
+                                  {field.value && field.value.length > 0 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => field.onChange('')}
+                                      className="text-muted-foreground hover:text-foreground transition-colors"
+                                      title="Clear"
+                                    >
+                                      <IconX className="h-4 w-4" />
+                                    </button>
+                                  )}
+                                  {field.value && field.value.length === 6 && (
+                                    <button
+                                      type="button"
+                                      onClick={handleCopyCode}
+                                      className="text-muted-foreground hover:text-foreground transition-colors"
+                                      title={copied ? "Copied!" : "Copy code"}
+                                    >
+                                      {copied ? (
+                                        <IconCheck className="h-4 w-4 text-green-500" />
+                                      ) : (
+                                        <IconCopy className="h-4 w-4" />
+                                      )}
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
 
-<AnimatePresence>
-  {isLoadingPreview && watchInviteCode?.length === 6 && (
-    <motion.div
-      initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: 'auto' }}
-      exit={{ opacity: 0, height: 0 }}
-      className="overflow-hidden"
-    >
-      <Card className="border border-border/50 bg-muted/20 animate-pulse">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="h-12 w-12 bg-gray-200 rounded-full"></div>
-              <div className="space-y-2">
-                <div className="h-4 w-32 bg-gray-200 rounded"></div>
-                <div className="flex space-x-2">
-                  <div className="h-4 w-16 bg-gray-200 rounded"></div>
-                  <div className="h-4 w-24 bg-gray-200 rounded"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="h-3 w-full bg-gray-200 rounded"></div>
-          <div className="h-3 w-2/3 bg-gray-200 rounded"></div>
-        </CardContent>
-      </Card>
-    </motion.div>
-  )}
+                      <AnimatePresence>
+                        {isLoadingPreview && watchInviteCode?.length === 6 && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden"
+                          >
+                            <Card className="border border-border/50 bg-muted/20 animate-pulse">
+                              <CardHeader className="pb-3">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex items-center space-x-4">
+                                    <div className="h-12 w-12 bg-gray-200 rounded-full"></div>
+                                    <div className="space-y-2">
+                                      <div className="h-4 w-32 bg-gray-200 rounded"></div>
+                                      <div className="flex space-x-2">
+                                        <div className="h-4 w-16 bg-gray-200 rounded"></div>
+                                        <div className="h-4 w-24 bg-gray-200 rounded"></div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </CardHeader>
+                              <CardContent className="space-y-3">
+                                <div className="h-3 w-full bg-gray-200 rounded"></div>
+                                <div className="h-3 w-2/3 bg-gray-200 rounded"></div>
+                              </CardContent>
+                            </Card>
+                          </motion.div>
+                        )}
 
                         {teamPreview && !isLoadingPreview && watchInviteCode?.length === 6 && (
                           <motion.div
@@ -409,61 +411,61 @@ export default function JoinTeam() {
                             animate={{ opacity: 1, y: 0 }}
                             className="space-y-4 pt-2"
                           >
-<Card className="border border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10 shadow-sm">
-  <CardHeader className="pb-3">
-    <div className="flex items-start justify-between">
-      <div className="flex items-center space-x-4">
-        <Avatar className="h-12 w-12">
-          <AvatarFallback className="bg-primary/10 text-primary text-lg">
-            {teamPreview.name.charAt(0)}
-          </AvatarFallback>
-        </Avatar>
-        <div>
-          <h3 className="font-bold text-lg">{teamPreview.name}</h3>
-          <div className="flex items-center mt-1 space-x-2">
-            <Badge 
-              variant={teamPreview.isPublic ? 'default' : 'secondary'}
-              className="text-xs"
-            >
-              {teamPreview.isPublic ? (
-                <>
-                  <IconWorld className="h-3 w-3 mr-1" />
-                  Public
-                </>
-              ) : (
-                <>
-                  <IconLock className="h-3 w-3 mr-1" />
-                  Private
-                </>
-              )}
-            </Badge>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <IconUsersGroup className="h-3 w-3 mr-1" />
-              <span>{teamPreview.memberCount} members</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </CardHeader>
-  <CardContent className="space-y-3 pt-0">
-    {teamPreview.description && (
-      <p className="text-sm text-muted-foreground">
-        {teamPreview.description}
-      </p>
-    )}
-    <div className="flex items-center text-xs text-muted-foreground">
-      <IconCalendar className="h-3 w-3 mr-1 flex-shrink-0" />
-      <span>Created {new Date(teamPreview.createdAt).toLocaleDateString()}</span>
-    </div>
-  </CardContent>
-</Card>
+                            <Card className="border border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10 shadow-sm">
+                              <CardHeader className="pb-3">
+                                <div className="flex items-start justify-between">
+                                  <div className="flex items-center space-x-4">
+                                    <Avatar className="h-12 w-12">
+                                      <AvatarFallback className="bg-primary/10 text-primary text-lg">
+                                        {teamPreview.name.charAt(0)}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                      <h3 className="font-bold text-lg">{teamPreview.name}</h3>
+                                      <div className="flex items-center mt-1 space-x-2">
+                                        <Badge
+                                          variant={teamPreview.isPublic ? 'default' : 'secondary'}
+                                          className="text-xs"
+                                        >
+                                          {teamPreview.isPublic ? (
+                                            <>
+                                              <IconWorld className="h-3 w-3 mr-1" />
+                                              Public
+                                            </>
+                                          ) : (
+                                            <>
+                                              <IconLock className="h-3 w-3 mr-1" />
+                                              Private
+                                            </>
+                                          )}
+                                        </Badge>
+                                        <div className="flex items-center text-xs text-muted-foreground">
+                                          <IconUsersGroup className="h-3 w-3 mr-1" />
+                                          <span>{teamPreview.memberCount} members</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </CardHeader>
+                              <CardContent className="space-y-3 pt-0">
+                                {teamPreview.description && (
+                                  <p className="text-sm text-muted-foreground">
+                                    {teamPreview.description}
+                                  </p>
+                                )}
+                                <div className="flex items-center text-xs text-muted-foreground">
+                                  <IconCalendar className="h-3 w-3 mr-1 flex-shrink-0" />
+                                  <span>Created {new Date(teamPreview.createdAt).toLocaleDateString()}</span>
+                                </div>
+                              </CardContent>
+                            </Card>
                           </motion.div>
                         )}
                       </AnimatePresence>
 
                       {error && (
-                        <motion.div 
+                        <motion.div
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
                           className="text-sm text-destructive p-3 bg-destructive/10 rounded-md"
@@ -492,7 +494,7 @@ export default function JoinTeam() {
                 </CardContent>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="scan" className="mt-6">
               <Card className="border-2 shadow-lg">
                 <CardHeader>
@@ -525,7 +527,7 @@ export default function JoinTeam() {
               </Card>
             </TabsContent>
           </Tabs>
-          
+
           <div className="text-center text-sm text-muted-foreground">
             <p>Don't have an invite? Ask your team admin to send you one.</p>
           </div>
