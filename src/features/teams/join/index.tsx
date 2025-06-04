@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { motion, AnimatePresence } from 'motion/react'
 import { toast } from 'sonner'
 import { 
-  IconUser, 
   IconInfoCircle, 
   IconQrcode,
   IconCopy,
@@ -17,36 +16,37 @@ import {
   IconWorld,
   IconX
 } from '@tabler/icons-react'
-import dynamic from 'next/dynamic'
+import { QRCodeSVG } from 'qrcode.react';
 
-// Lazy load QRCode component to avoid SSR issues
-const QRCode = dynamic<{
+// Loading component for QR code
+const QRCodeLoader = () => (
+  <div className="w-32 h-32 bg-gray-100 rounded-md flex items-center justify-center">
+    Loading QR...
+  </div>
+);
+
+// QRCode wrapper component with loading state
+const QRCode = (props: {
   value: string;
   size?: number;
   level?: 'L' | 'M' | 'Q' | 'H';
   includeMargin?: boolean;
-}>(
-  () => import('qrcode.react').then(mod => {
-    // Handle both ESM and CJS imports
-    const QRCodeComponent = 'default' in mod ? mod.default : mod.QRCodeSVG;
-    return { default: QRCodeComponent };
-  }) as Promise<{
-    default: React.ComponentType<{
-      value: string;
-      size?: number;
-      level?: 'L' | 'M' | 'Q' | 'H';
-      includeMargin?: boolean;
-    }>;
-  }>,
-  { 
-    ssr: false,
-    loading: () => (
-      <div className="w-32 h-32 bg-gray-100 rounded-md flex items-center justify-center">
-        Loading QR...
-      </div>
-    )
+}) => {
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsClient(true);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!isClient) {
+    return <QRCodeLoader />;
   }
-)
+
+  return <QRCodeSVG {...props} />;
+};
 
 import { Header } from '~/components/layout/header'
 import { Main } from '~/components/layout/main'
@@ -201,7 +201,7 @@ export default function JoinTeam() {
     
     return (
       <div className="flex flex-col items-center space-y-4">
-        <div className="p-4 bg-white rounded-lg border border-gray-200">
+        <div className="p-4 bg-white rounded-lg border border-gray-200 flex items-center justify-center" style={{ minHeight: '160px' }}>
           {inviteUrl && (
             <QRCode 
               value={inviteUrl}
